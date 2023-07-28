@@ -16,9 +16,7 @@ export default function SignUp() {
             }}
           />
           <div className="relative z-20 flex items-center text-lg font-medium">
-            <Link to="/">
-              <Logo variant="white" />
-            </Link>
+            <Logo variant="white" />
           </div>
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2"></blockquote>
