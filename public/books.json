@@ -1,0 +1,244 @@
+{
+  "books": [
+    {
+      "_id": "1",
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "genre": "Fiction",
+      "publicationDate": "April 10, 1925",
+      "imageUrl": "https://source.unsplash.com/random?book-cor",
+      "reviews": [
+        {
+          "user": "JohnDoe123",
+          "rating": 4.5,
+          "comment": "A timeless classic with a captivating story."
+        },
+        {
+          "user": "BookLover99",
+          "rating": 5,
+          "comment": "One of the best novels ever written. Loved it!"
+        }
+      ]
+    },
+    {
+      "_id": "2",
+      "title": "To Kill a Mockingbird",
+      "author": "Harper Lee",
+      "genre": "Fiction",
+      "publicationDate": "July 11, 1960",
+      "imageUrl": "https://source.unsplash.com/random?book-cove",
+      "reviews": [
+        {
+          "user": "BookNerdGirl",
+          "rating": 5,
+          "comment": "A profound and thought-provoking book. Highly recommended!"
+        },
+        {
+          "user": "ReadingIsLife",
+          "rating": 4,
+          "comment": "Beautifully written with memorable characters."
+        }
+      ]
+    },
+    {
+      "_id": "3",
+      "title": "1984",
+      "author": "George Orwell",
+      "genre": "Dystopian Fiction",
+      "publicationDate": "June 8, 1949",
+      "imageUrl": "https://source.unsplash.com/random?book-cover",
+      "reviews": [
+        {
+          "user": "OrwellFan88",
+          "rating": 5,
+          "comment": "An unsettling and visionary masterpiece."
+        },
+        {
+          "user": "BigBrotherWatcher",
+          "rating": 3,
+          "comment": "Thought-provoking but a bit too dark for my taste."
+        }
+      ]
+    },
+    {
+      "_id": "4",
+      "title": "Pride and Prejudice",
+      "author": "Jane Austen",
+      "genre": "Romance",
+      "publicationDate": "January 28, 1813",
+      "imageUrl": "https://source.unsplash.com/random?book-h",
+      "reviews": [
+        {
+          "user": "BookWormGirl",
+          "rating": 5,
+          "comment": "A delightful and timeless romance novel."
+        },
+        {
+          "user": "LiteraryLover",
+          "rating": 4,
+          "comment": "Classic literature at its finest."
+        }
+      ]
+    },
+    {
+      "_id": "5",
+      "title": "The Lord of the Rings",
+      "author": "J.R.R. Tolkien",
+      "genre": "Fantasy",
+      "publicationDate": "July 29, 1954",
+      "imageUrl": "https://source.unsplash.com/random?book-ver",
+      "reviews": [
+        {
+          "user": "FantasyFanatic",
+          "rating": 5,
+          "comment": "A masterpiece of epic fantasy."
+        },
+        {
+          "user": "TolkienEnthusiast",
+          "rating": 5,
+          "comment": "The world-building is unparalleled."
+        }
+      ]
+    },
+    {
+      "_id": "6",
+      "title": "The Lord of the Rings",
+      "author": "J.R.R. Tolkien",
+      "genre": "Fantasy",
+      "publicationDate": "July 29, 1954",
+      "imageUrl": "https://source.unsplash.com/random?book-k",
+      "reviews": [
+        {
+          "user": "FantasyFanatic",
+          "rating": 5,
+          "comment": "A masterpiece of epic fantasy."
+        },
+        {
+          "user": "TolkienEnthusiast",
+          "rating": 5,
+          "comment": "The world-building is unparalleled."
+        }
+      ]
+    },
+    {
+      "_id": "7",
+      "title": "The Lord of the Rings",
+      "author": "J.R.R. Tolkien",
+      "genre": "Fantasy",
+      "publicationDate": "July 29, 1954",
+      "imageUrl": "https://source.unsplash.com/random?book-coi",
+      "reviews": [
+        {
+          "user": "FantasyFanatic",
+          "rating": 5,
+          "comment": "A masterpiece of epic fantasy."
+        },
+        {
+          "user": "TolkienEnthusiast",
+          "rating": 5,
+          "comment": "The world-building is unparalleled."
+        }
+      ]
+    },
+    {
+      "_id": "8",
+      "title": "The Lord of the Rings",
+      "author": "J.R.R. Tolkien",
+      "genre": "Fantasy",
+      "publicationDate": "July 29, 1954",
+      "imageUrl": "https://source.unsplash.com/random?book-",
+      "reviews": [
+        {
+          "user": "FantasyFanatic",
+          "rating": 5,
+          "comment": "A masterpiece of epic fantasy."
+        },
+        {
+          "user": "TolkienEnthusiast",
+          "rating": 5,
+          "comment": "The world-building is unparalleled."
+        }
+      ]
+    },
+    {
+      "_id": "9",
+      "title": "The Lord of the Rings",
+      "author": "J.R.R. Tolkien",
+      "genre": "Fantasy",
+      "publicationDate": "July 29, 1954",
+      "imageUrl": "https://source.unsplash.com/random?book-co",
+      "reviews": [
+        {
+          "user": "FantasyFanatic",
+          "rating": 5,
+          "comment": "A masterpiece of epic fantasy."
+        },
+        {
+          "user": "TolkienEnthusiast",
+          "rating": 5,
+          "comment": "The world-building is unparalleled."
+        }
+      ]
+    },
+    {
+      "_id": "10",
+      "title": "The Lord of the Rings",
+      "author": "J.R.R. Tolkien",
+      "genre": "Fantasy",
+      "publicationDate": "July 29, 1954",
+      "imageUrl": "https://source.unsplash.com/random?book-g",
+      "reviews": [
+        {
+          "user": "FantasyFanatic",
+          "rating": 5,
+          "comment": "A masterpiece of epic fantasy."
+        },
+        {
+          "user": "TolkienEnthusiast",
+          "rating": 5,
+          "comment": "The world-building is unparalleled."
+        }
+      ]
+    },
+    {
+      "_id": "11",
+      "title": "The Lord of the Rings",
+      "author": "J.R.R. Tolkien",
+      "genre": "Fantasy",
+      "publicationDate": "July 29, 1954",
+      "imageUrl": "https://source.unsplash.com/random?book-a",
+      "reviews": [
+        {
+          "user": "FantasyFanatic",
+          "rating": 5,
+          "comment": "A masterpiece of epic fantasy."
+        },
+        {
+          "user": "TolkienEnthusiast",
+          "rating": 5,
+          "comment": "The world-building is unparalleled."
+        }
+      ]
+    },
+    {
+      "_id": "12",
+      "title": "The Lord of the Rings",
+      "author": "J.R.R. Tolkien",
+      "genre": "Fantasy",
+      "publicationDate": "July 29, 1954",
+      "imageUrl": "https://source.unsplash.com/random?book-cova",
+      "reviews": [
+        {
+          "user": "FantasyFanatic",
+          "rating": 5,
+          "comment": "A masterpiece of epic fantasy."
+        },
+        {
+          "user": "TolkienEnthusiast",
+          "rating": 5,
+          "comment": "The world-building is unparalleled."
+        }
+      ]
+    }
+  ]
+}

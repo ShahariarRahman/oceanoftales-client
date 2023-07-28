@@ -8,11 +8,11 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "prettier": "prettier --ignore-path .gitignore --write \"**/*.+(ts|tsx|json)\"",
+    "prettier": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|tsx|json)\"",
     "lint-prettier": "npm run lint && npm run prettier"
   },
   "lint-staged": {
-    "src/**/*.{tsx,ts}": [
+    "src/**/*.{js,ts,tsx,json}": [
       "npm run lint-prettier",
       "eslint --fix",
       "git add"
