@@ -95,10 +95,7 @@ export function SignUpForm({ className, ...props }: UserAuthFormProps) {
           {isDisableButton && (
             <>
               <p className="text-xs text-red-700">{"password not matched"}</p>
-              <Button
-                disabled={isDisableButton}
-                className="bg-red-600 hover:bg-red-500 text-white mt-2"
-              >
+              <Button className="bg-red-600 hover:bg-red-500 text-white mt-2">
                 Create Account
               </Button>
             </>
