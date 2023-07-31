@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Button } from "../components/ui/button";
@@ -17,11 +18,28 @@ import { GiBookshelf } from "react-icons/gi";
 import { PiSun, PiSunFill } from "react-icons/pi";
 import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
+import { useSignOutMutation } from "@/redux/features/auth/authApi";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { setUserEmail } from "@/redux/features/auth/authSlice";
 
 export default function Navbar() {
   const [isNight, setIsNight] = useState<boolean>(false);
-  // ! temp data
-  const user = true;
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const email = useAppSelector((state) => state.auth.user.email);
+
+  const dispatch = useAppDispatch();
+
+  const [postSignOut] = useSignOutMutation();
+
+  const handleSignOut = async () => {
+    setLoading(true);
+    (await postSignOut(undefined)) as any;
+    sessionStorage.clear();
+    dispatch(setUserEmail(null));
+    setLoading(false);
+  };
+
   return (
     <nav className="w-full h-16 fixed top backdrop-blur-lg z-10">
       <div className="h-full w-full bg-white/60">
@@ -49,46 +67,63 @@ export default function Navbar() {
                   </Link>
                 </Button>
               </li>
-              <li>
-                <Button variant="link" asChild>
-                  <Link to="/add-new-book">
-                    <span className="mr-1">
-                      <LuBookPlus />
-                    </span>
-                    <span>Add New Book</span>
-                  </Link>
-                </Button>
-              </li>
-              <li>
-                <Button variant="link" asChild>
-                  <Link to="/reading-book">
-                    <span className="mr-1">
-                      <AiOutlineRead />
-                    </span>
-                    <span> Reading list</span>
-                  </Link>
-                </Button>
-              </li>
-              <li>
-                <Button variant="link" asChild>
-                  <Link to="/wishlist-book">
-                    <span className="mr-1">
-                      <BsCartPlus />
-                    </span>
-                    <span>Wishlist</span>
-                  </Link>
-                </Button>
-              </li>
-              <li>
-                <Button variant="link" asChild>
-                  <Link to="/login">
-                    <span className="mr-1">
-                      <LuUserPlus />
-                    </span>
-                    <span>Sign In</span>
-                  </Link>
-                </Button>
-              </li>
+              {email && (
+                <>
+                  <li>
+                    <Button variant="link" asChild>
+                      <Link to="/add-new-book">
+                        <span className="mr-1">
+                          <LuBookPlus />
+                        </span>
+                        <span>Add New Book</span>
+                      </Link>
+                    </Button>
+                  </li>
+                  <li>
+                    <Button variant="link" asChild>
+                      <Link to="/reading-book">
+                        <span className="mr-1">
+                          <AiOutlineRead />
+                        </span>
+                        <span> Reading list</span>
+                      </Link>
+                    </Button>
+                  </li>
+                  <li>
+                    <Button variant="link" asChild>
+                      <Link to="/wishlist-book">
+                        <span className="mr-1">
+                          <BsCartPlus />
+                        </span>
+                        <span>Wishlist</span>
+                      </Link>
+                    </Button>
+                  </li>
+                  <li className="cursor-pointer" onClick={handleSignOut}>
+                    <Button disabled={loading} variant="link">
+                      <span className="flex justify-center items-center">
+                        <span className="mr-1">
+                          <LuUserPlus />
+                        </span>
+                        <span>Sign Out</span>
+                      </span>
+                    </Button>
+                  </li>
+                </>
+              )}
+
+              {!email && (
+                <li>
+                  <Button variant="link" asChild>
+                    <Link to="/login">
+                      <span className="mr-1">
+                        <LuUserPlus />
+                      </span>
+                      <span>Sign In</span>
+                    </Link>
+                  </Button>
+                </li>
+              )}
               <li
                 className="flex space-x-2"
                 onClick={() => setIsNight(!isNight)}
@@ -96,7 +131,7 @@ export default function Navbar() {
                 <Switch checked={isNight} />
                 {isNight ? <PiSunFill size={25} /> : <PiSun size={25} />}
               </li>
-              {user && (
+              {email && (
                 <li className="ml-5">
                   <DropdownMenu>
                     <DropdownMenuTrigger className="outline-none">
@@ -157,54 +192,75 @@ export default function Navbar() {
                       </Link>
                     </Button>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Button variant="link" asChild>
-                      <Link to="/add-new-book">
-                        <li className="w-52 flex justify-start items-center">
-                          <span className="mr-1">
-                            <LuBookPlus />
-                          </span>
-                          <span>Add New Book</span>
-                        </li>
-                      </Link>
-                    </Button>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Button variant="link" asChild>
-                      <Link to="/reading-book">
-                        <li className="w-52 flex justify-start items-center">
-                          <span className="mr-1">
-                            <AiOutlineRead />
-                          </span>
-                          <span> Reading list</span>
-                        </li>
-                      </Link>
-                    </Button>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Button variant="link" asChild>
-                      <Link to="/wishlist-book">
-                        <li className="w-52 flex justify-start items-center">
-                          <span className="mr-1">
-                            <BsCartPlus />
-                          </span>
-                          <span>Wishlist</span>
-                        </li>
-                      </Link>
-                    </Button>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Button variant="link" asChild>
-                      <Link to="/login">
-                        <li className="w-52 flex justify-start items-center">
-                          <span className="mr-1">
-                            <LuUserPlus />
-                          </span>
-                          <span>Sign In</span>
-                        </li>
-                      </Link>
-                    </Button>
-                  </DropdownMenuItem>
+                  {email && (
+                    <>
+                      <DropdownMenuItem className="cursor-pointer">
+                        <Button variant="link" asChild>
+                          <Link to="/add-new-book">
+                            <li className="w-52 flex justify-start items-center">
+                              <span className="mr-1">
+                                <LuBookPlus />
+                              </span>
+                              <span>Add New Book</span>
+                            </li>
+                          </Link>
+                        </Button>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer">
+                        <Button variant="link" asChild>
+                          <Link to="/reading-book">
+                            <li className="w-52 flex justify-start items-center">
+                              <span className="mr-1">
+                                <AiOutlineRead />
+                              </span>
+                              <span> Reading list</span>
+                            </li>
+                          </Link>
+                        </Button>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer">
+                        <Button variant="link" asChild>
+                          <Link to="/wishlist-book">
+                            <li className="w-52 flex justify-start items-center">
+                              <span className="mr-1">
+                                <BsCartPlus />
+                              </span>
+                              <span>Wishlist</span>
+                            </li>
+                          </Link>
+                        </Button>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={handleSignOut}
+                        className="cursor-pointer"
+                      >
+                        <Button variant="link" asChild>
+                          <Link to="/login">
+                            <li className="w-52 flex justify-start items-center">
+                              <span className="mr-1">
+                                <LuUserPlus />
+                              </span>
+                              <span>Sign Out</span>
+                            </li>
+                          </Link>
+                        </Button>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  {!email && (
+                    <DropdownMenuItem className="cursor-pointer">
+                      <Button variant="link" asChild>
+                        <Link to="/login">
+                          <li className="w-52 flex justify-start items-center">
+                            <span className="mr-1">
+                              <LuUserPlus />
+                            </span>
+                            <span>Sign In</span>
+                          </li>
+                        </Link>
+                      </Button>
+                    </DropdownMenuItem>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </ul>

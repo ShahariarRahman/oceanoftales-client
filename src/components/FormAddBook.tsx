@@ -1,7 +1,7 @@
 import { SyntheticEvent, useState } from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { bookGenres } from "@/constant/bookInfo";
+import { bookGenres } from "@/constant/book";
 
 export default function FormAddBook() {
   const [author, setAuthor] = useState("");
@@ -49,7 +49,9 @@ export default function FormAddBook() {
               required
             >
               {bookGenres.map((genre) => (
-                <option value={genre}>{genre}</option>
+                <option key={genre} value={genre}>
+                  {genre}
+                </option>
               ))}
             </select>
           </div>

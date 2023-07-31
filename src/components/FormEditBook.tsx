@@ -1,7 +1,7 @@
 import { SyntheticEvent, useState } from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { bookGenres } from "@/constant/bookInfo";
+import { bookGenres } from "@/constant/book";
 
 export default function FormEditBook() {
   const [author, setAuthor] = useState("");

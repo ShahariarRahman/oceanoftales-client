@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import { Input } from "./ui/input";
 import { BsFilterLeft } from "react-icons/bs";
-import { bookGenres } from "@/constant/bookInfo";
+import { bookGenres } from "@/constant/book";
 
 export default function BookFilter() {
   //! Dummy Data
@@ -56,7 +56,9 @@ export default function BookFilter() {
               {[...Array(27)]
                 .map((_, index) => 2001 + index)
                 .map((year) => (
-                  <option value={year}>{year}</option>
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
                 ))}
             </select>
             <label
@@ -72,15 +74,17 @@ export default function BookFilter() {
               {[...Array(27)]
                 .map((_, index) => 2001 + index)
                 .map((year) => (
-                  <option value={year}>{year}</option>
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
                 ))}
             </select>
           </div>
         </div>
         <div className="flex justify-end mt-4">
           <Button className="mr-2" onClick={handleFilter}>
-            <BsFilterLeft size={20} />
-            <span className="ml-1">Apply Filter</span>
+            <BsFilterLeft size={18} />
+            <span className="ml-1 whitespace-nowrap">Filter</span>
           </Button>
           <Button variant="outline" onClick={handleReset}>
             Reset

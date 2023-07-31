@@ -1,110 +1,190 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FcGoogle } from "react-icons/fc";
 import { HTMLAttributes, useEffect, useState } from "react";
-import { useForm, SubmitHandler, useWatch } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
+import type { SubmitHandler } from "react-hook-form";
+import { IAuthInputs } from "@/types/globalTypes";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AuthValidation } from "@/validation/auth.validation";
+import { useSignUpMutation } from "@/redux/features/auth/authApi";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { setUserEmail } from "@/redux/features/auth/authSlice";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type UserAuthFormProps = HTMLAttributes<HTMLDivElement>;
-
-type Inputs = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
+type SignUpError = { data?: any };
 
 export function SignUpForm({ className, ...props }: UserAuthFormProps) {
-  const [isDisableButton, setIsDisableButton] = useState<boolean>(false);
-  const [isConfirmPassActive, setIsConfirmPassActive] =
-    useState<boolean>(false);
+  const [field, setField] = useState<IAuthInputs>();
 
-  const { handleSubmit, register, control } = useForm<Inputs>();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    trigger,
+  } = useForm<IAuthInputs>({
+    resolver: zodResolver(AuthValidation.signUpZodSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
-  const password = useWatch({ control, name: "password" });
-  const confirmPassword = useWatch({ control, name: "confirmPassword" });
+  const { email, password, confirmPassword } = useWatch({ control });
+
+  const user = useAppSelector((state) => state.auth.user.email);
+
+  const [postUser, { isLoading, isError, error: postError, reset: postReset }] =
+    useSignUpMutation();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location?.state?.pathname || "/";
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (!isConfirmPassActive && confirmPassword) {
-      setIsConfirmPassActive(true);
+    if (password?.length && confirmPassword?.length && password) {
+      trigger("confirmPassword");
     }
     if (
-      password !== confirmPassword &&
-      isConfirmPassActive &&
-      !isDisableButton
+      isError &&
+      (field?.email !== email ||
+        field?.password !== password ||
+        field?.confirmPassword !== confirmPassword)
     ) {
-      setIsDisableButton(true);
-    } else if (
-      password === confirmPassword &&
-      isConfirmPassActive &&
-      isDisableButton
-    ) {
-      setIsDisableButton(false);
+      postReset();
     }
-  }, [password, confirmPassword, isConfirmPassActive, isDisableButton]);
+  }, [
+    field,
+    email,
+    password,
+    confirmPassword,
+    trigger,
+    isError,
+    postReset,
+    field?.confirmPassword,
+    field?.email,
+    field?.password,
+  ]);
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
+  useEffect(() => {
+    if (user) {
+      navigate(from, { replace: true });
+    }
+  }, [user, from, navigate]);
+
+  const onSubmit: SubmitHandler<IAuthInputs> = async (data) => {
+    const isFormValid = await trigger();
+    if (isFormValid) {
+      const user = {
+        email: data.email,
+        password: data.password,
+      };
+      const postData = (await postUser(user)) as any;
+      const accessToken = await postData?.data?.data?.accessToken;
+      if (accessToken) {
+        sessionStorage.setItem("accessToken", accessToken);
+        dispatch(setUserEmail(user.email));
+        reset();
+      } else {
+        setField(data);
+      }
+    }
   };
+
+  const errorMessage =
+    errors.email?.message ||
+    errors.password?.message ||
+    errors.confirmPassword?.message ||
+    (postError as SignUpError)?.data?.message;
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-2">
-          <div className="grid gap-2">
-            <Label className="sr-only" htmlFor="email">
+          <div className="grid gap-3">
+            <Label className="sr-only" htmlFor="sign-up-email">
               Email
             </Label>
-            <Input
-              {...register("email", { required: true })}
-              id="email"
-              placeholder="name@example.com"
-              type="email"
-              autoCapitalize="none"
-              autoComplete="email"
-              autoCorrect="off"
-              disabled={false}
+            <Controller
+              name="email"
+              control={control}
+              render={({ field }) => (
+                <div>
+                  <Input
+                    id="sign-up-email"
+                    placeholder="name@example.com"
+                    type="text"
+                    {...field}
+                    autoCapitalize="none"
+                    autoComplete="off"
+                    autoCorrect="off"
+                  />
+                </div>
+              )}
             />
-            <Input
-              {...register("password", { required: true })}
-              className=" focus:ring-offset-0"
-              id="password"
-              placeholder="your password"
-              type="password"
-              autoCapitalize="none"
-              autoCorrect="off"
-              disabled={false}
+
+            <Label className="sr-only" htmlFor="sign-up-password">
+              Password
+            </Label>
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <div>
+                  <Input
+                    id="sign-up-password"
+                    {...field}
+                    placeholder="your password"
+                    type="password"
+                    autoCapitalize="none"
+                    autoComplete="off"
+                  />
+                </div>
+              )}
             />
-            <Input
-              {...register("confirmPassword", { required: true })}
-              id="confirmPassword"
-              placeholder="confirm password"
-              type="password"
-              autoCapitalize="none"
-              autoCorrect="off"
-              disabled={false}
+            <Label className="sr-only" htmlFor="sign-up-confirm password">
+              Confirm Password
+            </Label>
+            <Controller
+              name="confirmPassword"
+              control={control}
+              render={({ field }) => (
+                <div>
+                  <Input
+                    id="sign-up-confirm password"
+                    {...field}
+                    placeholder="confirm password"
+                    type="password"
+                    autoCapitalize="none"
+                    autoComplete="off"
+                  />
+                </div>
+              )}
             />
           </div>
-          {/* <Button
-            disabled={isDisable}
-            className="bg-blue-600 hover:bg-blue-500 text-white"
-          >
-            {isDisable && <p>loading</p>}
-            Create Account
-          </Button> */}
-          {isDisableButton && (
+
+          {errorMessage ? (
             <>
-              <p className="text-xs text-red-700">{"password not matched"}</p>
-              <Button className="bg-red-600 hover:bg-red-500 text-white mt-2">
+              <p className="text-xs text-red-700">{errorMessage}</p>
+              <Button
+                disabled
+                className="bg-red-600 hover:bg-red-500 text-white mt-2"
+              >
                 Create Account
               </Button>
             </>
-          )}
-
-          {!isDisableButton && (
+          ) : (
             <Button
-              disabled={isDisableButton}
-              className="bg-blue-600 hover:bg-blue-500 text-white mt-8"
+              disabled={isLoading}
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-500 text-white mb-2 mt-8"
             >
               Create Account
             </Button>
@@ -122,6 +202,7 @@ export function SignUpForm({ className, ...props }: UserAuthFormProps) {
         </div>
       </div>
       <Button
+        disabled={isLoading}
         variant="outline"
         type="button"
         className="flex items-center justify-between text-gray-900"
