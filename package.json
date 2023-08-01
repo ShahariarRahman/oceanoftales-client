@@ -52,7 +52,7 @@
     "clsx": "^1.2.1",
     "cmdk": "^0.2.0",
     "date-fns": "^2.30.0",
-    "firebase": "^10.0.0",
+    "firebase": "^10.1.0",
     "jsonwebtoken": "^9.0.1",
     "lucide-react": "^0.233.0",
     "react": "^18.2.0",

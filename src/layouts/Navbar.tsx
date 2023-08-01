@@ -20,11 +20,13 @@ import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
 import { useSignOutMutation } from "@/redux/features/auth/authApi";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { setUserEmail } from "@/redux/features/auth/authSlice";
+import { setLoading, setUserEmail } from "@/redux/features/auth/authSlice";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export default function Navbar() {
+  const { user, platform, isLoading } = useAppSelector((state) => state.auth);
   const [isNight, setIsNight] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
 
   const email = useAppSelector((state) => state.auth.user.email);
 
@@ -33,11 +35,19 @@ export default function Navbar() {
   const [postSignOut] = useSignOutMutation();
 
   const handleSignOut = async () => {
-    setLoading(true);
-    (await postSignOut(undefined)) as any;
-    sessionStorage.clear();
-    dispatch(setUserEmail(null));
-    setLoading(false);
+    dispatch(setLoading(true));
+    if (platform === "custom") {
+      const data = (await postSignOut(undefined)) as any;
+      if (data?.data?.success) {
+        sessionStorage.clear();
+        dispatch(setUserEmail(null));
+      }
+    } else if (platform === "firebase") {
+      signOut(auth).then(() => {
+        dispatch(setUserEmail(null));
+      });
+    }
+    dispatch(setLoading(false));
   };
 
   return (
@@ -100,7 +110,7 @@ export default function Navbar() {
                     </Button>
                   </li>
                   <li className="cursor-pointer" onClick={handleSignOut}>
-                    <Button disabled={loading} variant="link">
+                    <Button disabled={isLoading} variant="link">
                       <span className="flex justify-center items-center">
                         <span className="mr-1">
                           <LuUserPlus />
@@ -141,7 +151,12 @@ export default function Navbar() {
                       </Avatar>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuLabel>Mr. john Doe</DropdownMenuLabel>
+                      <DropdownMenuLabel>
+                        <p className="capitalize">
+                          {user.email?.split("@")[0]}
+                        </p>
+                        <small> {user?.email}</small>
+                      </DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem className="cursor-pointer">
                         Profile
@@ -234,7 +249,7 @@ export default function Navbar() {
                         onClick={handleSignOut}
                         className="cursor-pointer"
                       >
-                        <Button variant="link" asChild>
+                        <Button disabled={isLoading} variant="link" asChild>
                           <Link to="/login">
                             <li className="w-52 flex justify-start items-center">
                               <span className="mr-1">

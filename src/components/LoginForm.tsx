@@ -12,7 +12,7 @@ import { AuthValidation } from "@/validation/auth.validation";
 import { IAuthInputs } from "@/types/globalTypes";
 import { useSignInMutation } from "@/redux/features/auth/authApi";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { setUserEmail } from "@/redux/features/auth/authSlice";
+import { googleLogin, setUserEmail } from "@/redux/features/auth/authSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 
 type UserAuthFormProps = HTMLAttributes<HTMLDivElement>;
@@ -74,6 +74,10 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
         setField(data);
       }
     }
+  };
+
+  const handleGoogleLogin = () => {
+    dispatch(googleLogin());
   };
 
   const errorMessage =
@@ -160,6 +164,7 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
         </div>
       </div>
       <Button
+        onClick={handleGoogleLogin}
         disabled={isLoading}
         variant="outline"
         type="button"

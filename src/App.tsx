@@ -6,23 +6,44 @@ import {
   useGenAccessTokenMutation,
 } from "./redux/features/auth/authApi";
 import { IResponse } from "./types/globalTypes";
-import { useAppDispatch } from "./redux/hooks";
-import { setUserEmail } from "./redux/features/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "./redux/hooks";
+import {
+  setLoading,
+  setPlatform,
+  setUserEmail,
+} from "./redux/features/auth/authSlice";
 import Loading from "./components/Loading";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./lib/firebase";
 
 type IGenTokenRes = {
   data: IResponse;
 };
 
 function App() {
+  const { platform, isLoading } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(setLoading(true));
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        dispatch(setUserEmail(user.email));
+        dispatch(setLoading(false));
+        dispatch(setPlatform("firebase"));
+      } else {
+        dispatch(setLoading(false));
+        dispatch(setPlatform("custom"));
+      }
+    });
+  }, [dispatch]);
 
   const {
     data,
     isLoading: stateLoading,
     isError: stateError,
     refetch: stateRefetch,
-  } = useAuthStateQuery(undefined);
+  } = useAuthStateQuery(undefined, { skip: platform === "firebase" });
 
   const [
     getToken,
@@ -30,7 +51,13 @@ function App() {
   ] = useGenAccessTokenMutation();
 
   useEffect(() => {
-    if (stateError && !genLoading && !genSuccess && !genError) {
+    if (
+      platform === "custom" &&
+      stateError &&
+      !genLoading &&
+      !genSuccess &&
+      !genError
+    ) {
       getToken(undefined).then((data) => {
         const accessToken = (data as IGenTokenRes)?.data?.data?.accessToken;
         if (accessToken) {
@@ -40,6 +67,7 @@ function App() {
       });
     }
   }, [
+    platform,
     stateLoading,
     stateError,
     genLoading,
@@ -50,18 +78,15 @@ function App() {
   ]);
 
   useEffect(() => {
-    if (!stateLoading && !stateError) {
+    if (platform === "custom" && !stateLoading && !stateError) {
       dispatch(setUserEmail(data?.data));
     }
-  }, [stateLoading, stateError, data?.data, dispatch]);
+  }, [platform, stateLoading, stateError, data?.data, dispatch]);
 
   return (
     <div>
       <Toaster />
-      {/* <Loading /> */}
-      {/* */}
-      {genLoading || (stateLoading && <Loading />)}
-      {genLoading || stateLoading || <MainLayout />}
+      {isLoading || genLoading || stateLoading ? <Loading /> : <MainLayout />}
     </div>
   );
 }
