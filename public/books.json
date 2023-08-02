@@ -4,8 +4,8 @@
       "_id": "1",
       "title": "The Great Gatsby",
       "author": "F. Scott Fitzgerald",
-      "genre": "Fiction",
-      "publicationDate": "April 10, 1925",
+      "genre": "Mystery",
+      "publicationDate": "April 10, 2012",
       "imageUrl": "https://source.unsplash.com/random?book-cor",
       "reviews": [
         {
@@ -18,14 +18,15 @@
           "rating": 5,
           "comment": "One of the best novels ever written. Loved it!"
         }
-      ]
+      ],
+      "rating": 4.75
     },
     {
       "_id": "2",
       "title": "To Kill a Mockingbird",
       "author": "Harper Lee",
-      "genre": "Fiction",
-      "publicationDate": "July 11, 1960",
+      "genre": "Thriller",
+      "publicationDate": "July 11, 2016",
       "imageUrl": "https://source.unsplash.com/random?book-cove",
       "reviews": [
         {
@@ -38,14 +39,15 @@
           "rating": 4,
           "comment": "Beautifully written with memorable characters."
         }
-      ]
+      ],
+      "rating": 4.5
     },
     {
       "_id": "3",
       "title": "1984",
       "author": "George Orwell",
-      "genre": "Dystopian Fiction",
-      "publicationDate": "June 8, 1949",
+      "genre": "Science Fiction",
+      "publicationDate": "June 8, 2019",
       "imageUrl": "https://source.unsplash.com/random?book-cover",
       "reviews": [
         {
@@ -58,14 +60,15 @@
           "rating": 3,
           "comment": "Thought-provoking but a bit too dark for my taste."
         }
-      ]
+      ],
+      "rating": 4
     },
     {
       "_id": "4",
       "title": "Pride and Prejudice",
       "author": "Jane Austen",
-      "genre": "Romance",
-      "publicationDate": "January 28, 1813",
+      "genre": "Fantasy",
+      "publicationDate": "January 28, 2013",
       "imageUrl": "https://source.unsplash.com/random?book-h",
       "reviews": [
         {
@@ -78,14 +81,15 @@
           "rating": 4,
           "comment": "Classic literature at its finest."
         }
-      ]
+      ],
+      "rating": 4.5
     },
     {
       "_id": "5",
       "title": "The Lord of the Rings",
       "author": "J.R.R. Tolkien",
-      "genre": "Fantasy",
-      "publicationDate": "July 29, 1954",
+      "genre": "Romance",
+      "publicationDate": "July 29, 2014",
       "imageUrl": "https://source.unsplash.com/random?book-ver",
       "reviews": [
         {
@@ -98,14 +102,15 @@
           "rating": 5,
           "comment": "The world-building is unparalleled."
         }
-      ]
+      ],
+      "rating": 5
     },
     {
       "_id": "6",
       "title": "The Lord of the Rings",
       "author": "J.R.R. Tolkien",
-      "genre": "Fantasy",
-      "publicationDate": "July 29, 1954",
+      "genre": "Horror",
+      "publicationDate": "July 29, 2004",
       "imageUrl": "https://source.unsplash.com/random?book-k",
       "reviews": [
         {
@@ -118,14 +123,15 @@
           "rating": 5,
           "comment": "The world-building is unparalleled."
         }
-      ]
+      ],
+      "rating": 5
     },
     {
       "_id": "7",
       "title": "The Lord of the Rings",
       "author": "J.R.R. Tolkien",
-      "genre": "Fantasy",
-      "publicationDate": "July 29, 1954",
+      "genre": "Historical Fiction",
+      "publicationDate": "July 29, 2015",
       "imageUrl": "https://source.unsplash.com/random?book-coi",
       "reviews": [
         {
@@ -138,14 +144,15 @@
           "rating": 5,
           "comment": "The world-building is unparalleled."
         }
-      ]
+      ],
+      "rating": 5
     },
     {
       "_id": "8",
       "title": "The Lord of the Rings",
       "author": "J.R.R. Tolkien",
-      "genre": "Fantasy",
-      "publicationDate": "July 29, 1954",
+      "genre": "Dystopian",
+      "publicationDate": "July 29, 2005",
       "imageUrl": "https://source.unsplash.com/random?book-",
       "reviews": [
         {
@@ -158,14 +165,15 @@
           "rating": 5,
           "comment": "The world-building is unparalleled."
         }
-      ]
+      ],
+      "rating": 5
     },
     {
       "_id": "9",
       "title": "The Lord of the Rings",
       "author": "J.R.R. Tolkien",
-      "genre": "Fantasy",
-      "publicationDate": "July 29, 1954",
+      "genre": "Adventure",
+      "publicationDate": "July 29, 2017",
       "imageUrl": "https://source.unsplash.com/random?book-co",
       "reviews": [
         {
@@ -178,14 +186,15 @@
           "rating": 5,
           "comment": "The world-building is unparalleled."
         }
-      ]
+      ],
+      "rating": 5
     },
     {
       "_id": "10",
       "title": "The Lord of the Rings",
       "author": "J.R.R. Tolkien",
-      "genre": "Fantasy",
-      "publicationDate": "July 29, 1954",
+      "genre": "Non-fiction",
+      "publicationDate": "July 29, 2020",
       "imageUrl": "https://source.unsplash.com/random?book-g",
       "reviews": [
         {
@@ -198,14 +207,15 @@
           "rating": 5,
           "comment": "The world-building is unparalleled."
         }
-      ]
+      ],
+      "rating": 5
     },
     {
       "_id": "11",
       "title": "The Lord of the Rings",
       "author": "J.R.R. Tolkien",
-      "genre": "Fantasy",
-      "publicationDate": "July 29, 1954",
+      "genre": "Crime",
+      "publicationDate": "July 29, 2023",
       "imageUrl": "https://source.unsplash.com/random?book-a",
       "reviews": [
         {
@@ -218,14 +228,15 @@
           "rating": 5,
           "comment": "The world-building is unparalleled."
         }
-      ]
+      ],
+      "rating": 5
     },
     {
       "_id": "12",
       "title": "The Lord of the Rings",
       "author": "J.R.R. Tolkien",
-      "genre": "Fantasy",
-      "publicationDate": "July 29, 1954",
+      "genre": "Biography",
+      "publicationDate": "July 29, 2024",
       "imageUrl": "https://source.unsplash.com/random?book-cova",
       "reviews": [
         {
@@ -238,7 +249,8 @@
           "rating": 5,
           "comment": "The world-building is unparalleled."
         }
-      ]
+      ],
+      "rating": 5
     }
   ]
 }

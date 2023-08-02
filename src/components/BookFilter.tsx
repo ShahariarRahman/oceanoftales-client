@@ -26,8 +26,8 @@ export default function BookFilter() {
         <h2 className="text-xl uppercase mb-3">Filter Options</h2>
         <div className="mb-4">
           <h3 className="text-lg uppercase mb-2">Genre</h3>
-          {bookGenres.map((genre) => (
-            <label key={genre} className="flex items-center">
+          {bookGenres.map((genre, index) => (
+            <label key={index} className="flex items-center">
               <Checkbox
                 value={genre}
                 onClick={(e) => {

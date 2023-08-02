@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthValidation } from "@/validation/auth.validation";
 import { useSignUpMutation } from "@/redux/features/auth/authApi";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { setUserEmail } from "@/redux/features/auth/authSlice";
+import { googleLogin, setUserEmail } from "@/redux/features/auth/authSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 
 type UserAuthFormProps = HTMLAttributes<HTMLDivElement>;
@@ -96,6 +96,10 @@ export function SignUpForm({ className, ...props }: UserAuthFormProps) {
         setField(data);
       }
     }
+  };
+
+  const handleGoogleLogin = () => {
+    dispatch(googleLogin());
   };
 
   const errorMessage =
@@ -202,6 +206,7 @@ export function SignUpForm({ className, ...props }: UserAuthFormProps) {
         </div>
       </div>
       <Button
+        onClick={handleGoogleLogin}
         disabled={isLoading}
         variant="outline"
         type="button"

@@ -12,6 +12,7 @@ export type IBook = {
   genre: string;
   publicationDate: string;
   imageUrl: string;
+  rating: number;
   reviews: IReview[];
 };
 

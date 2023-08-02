@@ -7,6 +7,8 @@ import { BiEdit } from "react-icons/bi";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { BsCheckCircle, BsFillBagCheckFill } from "react-icons/bs";
 import { LuSmilePlus } from "react-icons/lu";
+import Rating from "react-rating";
+import { FaStar } from "react-icons/fa";
 
 export default function BookDetails() {
   const { id } = useParams();
@@ -21,6 +23,15 @@ export default function BookDetails() {
   const book = data?.find((item) => item._id === id);
   const author = true;
   //! Temporary code ends here
+
+  let bookRating = 0;
+  if (book?.reviews.length) {
+    const totalRatings = book?.reviews.reduce(
+      (acc, review) => acc + review.rating,
+      0,
+    );
+    bookRating = totalRatings / book?.reviews.length;
+  }
 
   return (
     <div className="flex flex-col items-center relative">
@@ -80,6 +91,16 @@ export default function BookDetails() {
         </div>
         <article className="col-span-6 flex justify-center items-center">
           <div className="w-3/4">
+            <p className="text-yellow-500 flex">
+              {
+                <Rating
+                  readonly
+                  initialRating={bookRating}
+                  fullSymbol={<FaStar className="w-5 h-5 fill-yellow-400" />}
+                  emptySymbol={<FaStar className="w-5 h-5 fill-gray-300" />}
+                />
+              }
+            </p>
             <h2 className="text-3xl font-semibold mb-4 text-gray-100">
               {book?.title}
             </h2>

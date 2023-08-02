@@ -2,6 +2,8 @@ import { IBook } from "@/types/globalTypes";
 import { toast } from "./ui/use-toast";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
+import Rating from "react-rating";
+import { FaStar } from "react-icons/fa";
 
 type IBookCardProps = {
   className?: string;
@@ -25,6 +27,16 @@ export default function BookCard({ book, className }: IBookCardProps) {
           className="w-full h-64 object-contain mb-6 rounded-lg"
         />
       </Link>
+      <p className="text-yellow-500 flex">
+        {
+          <Rating
+            readonly
+            initialRating={book?.rating || 0}
+            fullSymbol={<FaStar className="w-4 h-4 fill-yellow-400" />}
+            emptySymbol={<FaStar className="w-4 h-4 fill-gray-300" />}
+          />
+        }
+      </p>
       <h2 className="text-xl font-semibold">{book.title}</h2>
       <p className="text-gray-600 text-sm">Author: {book.author}</p>
       <p className="text-purple-700 font-semibold mt-1">{book.genre}</p>
