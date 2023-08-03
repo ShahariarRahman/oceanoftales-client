@@ -1,11 +1,12 @@
 import api from "../api/apiSlice";
 
-const bookApi = api.injectEndpoints({
+export const bookApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getBooks: builder.query({
-      query: () => ({
-        url: "/books",
+      query: (url) => ({
+        url: url,
       }),
+      providesTags: ["get-books"],
     }),
   }),
 });

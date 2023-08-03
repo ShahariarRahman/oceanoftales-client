@@ -19,7 +19,7 @@ const initialState: CounterState = {
     email: null,
     role: null,
   },
-  platform: "custom",
+  platform: "firebase",
   isLoading: true,
   isError: false,
   error: null,

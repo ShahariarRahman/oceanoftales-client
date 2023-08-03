@@ -4,6 +4,7 @@ import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import Rating from "react-rating";
 import { FaStar } from "react-icons/fa";
+import { format } from "date-fns";
 
 type IBookCardProps = {
   className?: string;
@@ -41,7 +42,7 @@ export default function BookCard({ book, className }: IBookCardProps) {
       <p className="text-gray-600 text-sm">Author: {book.author}</p>
       <p className="text-purple-700 font-semibold mt-1">{book.genre}</p>
       <p className="text-gray-700 mt-2 text-sm">
-        Publication Date: {book.publicationDate}
+        Publication Date: {format(new Date(book.publicationDate), "PP")}
       </p>
       <Button
         variant="default"
