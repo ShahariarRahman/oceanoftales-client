@@ -8,7 +8,10 @@ export type IReview = {
 export type IBook = {
   _id: string;
   title: string;
-  author: string;
+  author: {
+    email: string;
+    name: string;
+  };
   genre: string;
   publicationDate: string;
   imageUrl: string;

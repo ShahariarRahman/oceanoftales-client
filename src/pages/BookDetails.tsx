@@ -1,7 +1,6 @@
 import BookReview from "@/components/BookReview";
 import { Button } from "@/components/ui/button";
 import { IBook } from "@/types/globalTypes";
-import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { BiEdit } from "react-icons/bi";
 import { MdOutlineDeleteForever } from "react-icons/md";
@@ -9,28 +8,21 @@ import { BsCheckCircle, BsFillBagCheckFill } from "react-icons/bs";
 import { LuSmilePlus } from "react-icons/lu";
 import Rating from "react-rating";
 import { FaStar } from "react-icons/fa";
+import { useGetSingleBookQuery } from "@/redux/features/books/bookApi";
+import Loading from "@/components/Loading";
 
 export default function BookDetails() {
   const { id } = useParams();
+  const { data, isLoading } = useGetSingleBookQuery(id);
 
   //! Temporary code, should be replaced with redux
-  const [data, setData] = useState<IBook[]>([]);
-  useEffect(() => {
-    fetch("/books.json")
-      .then((res) => res.json())
-      .then((data) => setData(data.books));
-  }, []);
-  const book = data?.find((item) => item._id === id);
   const author = true;
   //! Temporary code ends here
 
-  let bookRating = 0;
-  if (book?.reviews.length) {
-    const totalRatings = book?.reviews.reduce(
-      (acc, review) => acc + review.rating,
-      0,
-    );
-    bookRating = totalRatings / book?.reviews.length;
+  const book: IBook = data?.data;
+
+  if (isLoading) {
+    return <Loading />;
   }
 
   return (
@@ -95,7 +87,7 @@ export default function BookDetails() {
               {
                 <Rating
                   readonly
-                  initialRating={bookRating}
+                  initialRating={book?.rating}
                   fullSymbol={<FaStar className="w-5 h-5 fill-yellow-400" />}
                   emptySymbol={<FaStar className="w-5 h-5 fill-gray-300" />}
                 />
@@ -104,7 +96,7 @@ export default function BookDetails() {
             <h2 className="text-3xl font-semibold mb-4 text-gray-100">
               {book?.title}
             </h2>
-            <p className="text-gray-200 mb-2">Author: {book?.author}</p>
+            <p className="text-gray-200 mb-2">Author: {book?.author?.name}</p>
             <p className="text-gray-200 mb-2">Genre: {book?.genre}</p>
             <p className="text-gray-200 mb-2">
               Publication Date: {book?.publicationDate}

@@ -7,6 +7,7 @@ import { BsFilterLeft } from "react-icons/bs";
 import { bookGenres } from "@/constant/book";
 import { useForm, Controller, SubmitHandler, useWatch } from "react-hook-form";
 import { Dispatch, SetStateAction, useEffect } from "react";
+import Select from "react-select";
 
 type ISearch = {
   search: string;
@@ -15,8 +16,8 @@ type IFilter = {
   genres: {
     [genre: string]: boolean;
   };
-  fromYear: string;
-  toYear: string;
+  fromYear: number;
+  toYear: number;
 };
 
 type Props = {
@@ -38,8 +39,8 @@ export default function BookFilter({ setUrl }: Props) {
     handleSubmit: filterHandleSubmit,
   } = useForm<IFilter>({
     defaultValues: {
-      fromYear: "2001",
-      toYear: "2027",
+      fromYear: undefined,
+      toYear: undefined,
     },
   });
 
@@ -60,7 +61,6 @@ export default function BookFilter({ setUrl }: Props) {
   useEffect(() => {
     if (!search?.length) {
       setUrl(`/books`);
-      console.log("search =", search);
     }
   }, [search, setUrl]);
 
@@ -69,6 +69,7 @@ export default function BookFilter({ setUrl }: Props) {
   };
 
   const handleFilter: SubmitHandler<IFilter> = (data) => {
+    console.log(data);
     const genres = Object.keys(data.genres).filter(
       (genre) => data.genres[genre],
     );
@@ -88,6 +89,7 @@ export default function BookFilter({ setUrl }: Props) {
     if (!genres.length) {
       setUrl(`/books`);
     }
+    console.log(data);
   };
 
   return (
@@ -109,7 +111,6 @@ export default function BookFilter({ setUrl }: Props) {
             />
           )}
         />
-
         <Button
           type="submit"
           variant="secondary"
@@ -120,7 +121,7 @@ export default function BookFilter({ setUrl }: Props) {
       </form>
       <form
         onSubmit={filterHandleSubmit(handleFilter)}
-        className="w-full max-w-md border border-gray-300 rounded-md p-4"
+        className="w-full max-w-md border border-gray-300 rounded-md p-4 text-gray-700"
       >
         <h2 className="text-xl uppercase mb-3">Filter Options</h2>
         <div className="mb-4">
@@ -145,55 +146,107 @@ export default function BookFilter({ setUrl }: Props) {
         </div>
         <div className="mb-4">
           <h3 className="text-lg uppercase mb-2">Publish Year</h3>
-          <div className="grid grid-cols-3 gap-2">
-            <label
-              htmlFor="yearSelect"
-              className="flex items-center text-gray-700 font-semibold mb-2"
-            >
-              From
-            </label>
+          <div className="grid gap-2 mt-3">
             <Controller
-              name="fromYear"
-              rules={{ required: true }}
               control={filterControl}
+              name="fromYear"
               render={({ field }) => (
-                <select
+                <Select
                   {...field}
-                  className="col-span-2 bg-white border appearance-none border-gray-300  px-4 py-2 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 w-full rounded-md text-gray-600 focus:shadow-outline"
-                >
-                  {[...Array(27)]
-                    .map((_, index) => 2001 + index)
-                    .map((year) => (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    ))}
-                </select>
+                  options={(
+                    [...Array(27)].map((_, index) => 2001 + index) as any
+                  ).map((year: object) => ({
+                    value: year,
+                    label: year,
+                  }))}
+                  value={field?.value || ""}
+                  onChange={(e) => field.onChange(e)}
+                  classNamePrefix="react-select"
+                  className="rounded-md text-md"
+                  placeholder="Select from year"
+                  isSearchable={true}
+                  isClearable={true}
+                  menuPlacement="top"
+                  styles={{
+                    control: (provided) => ({
+                      ...provided,
+                      border: "1px solid #e2e8f0",
+                      color: "#64748b",
+                      "&:hover": {
+                        border: "1px solid #e2e8f0",
+                      },
+                      boxShadow: "none",
+                    }),
+                    option: (provided, state) => ({
+                      ...provided,
+                      color: state.isSelected ? "white" : "#333333",
+                      backgroundColor: state.isSelected ? "#3870ff" : "white",
+                      "&:hover": {
+                        backgroundColor: "#7398f7",
+                        color: "white",
+                      },
+                    }),
+                    singleValue: (provided) => ({
+                      ...provided,
+                      color: "#0f172a",
+                    }),
+                    placeholder: (provided) => ({
+                      ...provided,
+                      color: "#64748b",
+                    }),
+                  }}
+                />
               )}
             />
-            <label
-              htmlFor="yearSelect"
-              className=" flex items-center text-gray-700  font-semibold mb-2"
-            >
-              To
-            </label>
             <Controller
-              name="toYear"
-              rules={{ required: true }}
               control={filterControl}
+              name="toYear"
               render={({ field }) => (
-                <select
+                <Select
                   {...field}
-                  className="col-span-2 bg-white border appearance-none border-gray-300 px-4 py-2 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 w-full rounded-md text-gray-600 focus:shadow-outline"
-                >
-                  {[...Array(27)]
-                    .map((_, index) => 2001 + index)
-                    .map((year) => (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    ))}
-                </select>
+                  options={(
+                    [...Array(27)].map((_, index) => 2001 + index) as any
+                  ).map((year: object) => ({
+                    value: year,
+                    label: year,
+                  }))}
+                  value={field?.value || ""}
+                  onChange={(e) => field.onChange(e)}
+                  classNamePrefix="react-select"
+                  className="rounded-md text-md"
+                  placeholder="Select to year"
+                  isSearchable={true}
+                  isClearable={true}
+                  menuPlacement="top"
+                  styles={{
+                    control: (provided) => ({
+                      ...provided,
+                      border: "1px solid #e2e8f0",
+                      color: "#64748b",
+                      "&:hover": {
+                        border: "1px solid #e2e8f0",
+                      },
+                      boxShadow: "none",
+                    }),
+                    option: (provided, state) => ({
+                      ...provided,
+                      color: state.isSelected ? "white" : "#333333",
+                      backgroundColor: state.isSelected ? "#3870ff" : "white",
+                      "&:hover": {
+                        backgroundColor: "#7398f7",
+                        color: "white",
+                      },
+                    }),
+                    singleValue: (provided) => ({
+                      ...provided,
+                      color: "#0f172a",
+                    }),
+                    placeholder: (provided) => ({
+                      ...provided,
+                      color: "#64748b",
+                    }),
+                  }}
+                />
               )}
             />
           </div>

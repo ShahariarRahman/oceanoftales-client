@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen fixed inset-0">
       <div className="scene w-screen">
         <div className="cube-wrapper">
           <div className="cube">

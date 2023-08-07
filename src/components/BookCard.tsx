@@ -39,7 +39,7 @@ export default function BookCard({ book, className }: IBookCardProps) {
         }
       </p>
       <h2 className="text-xl font-semibold">{book.title}</h2>
-      <p className="text-gray-600 text-sm">Author: {book.author}</p>
+      <p className="text-gray-600 text-sm">Author: {book.author?.name}</p>
       <p className="text-purple-700 font-semibold mt-1">{book.genre}</p>
       <p className="text-gray-700 mt-2 text-sm">
         Publication Date: {format(new Date(book.publicationDate), "PP")}

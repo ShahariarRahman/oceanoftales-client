@@ -1,4 +1,4 @@
-export const bookGenres = [
+export const bookGenres: string[] = [
   "Mystery",
   "Thriller",
   "Science Fiction",
