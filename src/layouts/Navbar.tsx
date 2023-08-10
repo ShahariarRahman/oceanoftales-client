@@ -16,6 +16,7 @@ import { AiOutlineRead, AiOutlineHome } from "react-icons/ai";
 import { LuBookPlus, LuUserPlus } from "react-icons/lu";
 import { GiBookshelf } from "react-icons/gi";
 import { PiSun, PiSunFill } from "react-icons/pi";
+import { RiLogoutBoxRLine } from "react-icons/ri";
 import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
 import { useSignOutMutation } from "@/redux/features/auth/authApi";
@@ -113,7 +114,7 @@ export default function Navbar() {
                     <Button disabled={isLoading} variant="link">
                       <span className="flex justify-center items-center">
                         <span className="mr-1">
-                          <LuUserPlus />
+                          <RiLogoutBoxRLine />
                         </span>
                         <span>Sign Out</span>
                       </span>
@@ -253,7 +254,7 @@ export default function Navbar() {
                           <Link to="/login">
                             <li className="w-52 flex justify-start items-center">
                               <span className="mr-1">
-                                <LuUserPlus />
+                                <RiLogoutBoxRLine />
                               </span>
                               <span>Sign Out</span>
                             </li>

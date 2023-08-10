@@ -10,12 +10,16 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Select from "react-select";
 import { storage } from "@/lib/firebase";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
 import { v4 } from "uuid";
 import { bookFormValidation } from "@/validation/bookForm.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BiMessageError } from "react-icons/bi";
-import { format } from "date-fns";
 import { useAppSelector } from "@/redux/hooks";
 import { useState } from "react";
 import LoadingButton from "./LoadingButton";
@@ -95,7 +99,7 @@ export default function FormAddBook() {
         email: email,
       },
       genre: data.genre.value,
-      publicationDate: format(data.publicationDate, "PP"),
+      publicationDate: data.publicationDate.toISOString(),
       imageUrl: "",
     };
 
@@ -105,7 +109,7 @@ export default function FormAddBook() {
     const snapshot = await uploadBytes(storageRef, imageUrl);
     const downloadURL = await getDownloadURL(snapshot.ref);
     const image = downloadURL.split("&token")[0];
-
+    console.log(image);
     formattedData.imageUrl = image;
 
     // database and api
@@ -128,6 +132,7 @@ export default function FormAddBook() {
         navigate(`/book/${bookId}`);
       }
     } else {
+      await deleteObject(storageRef);
       setLoading(false);
       const errorData: IErrorResponse = result.error;
 

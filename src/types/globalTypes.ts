@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export type IReview = {
   user: string;
   rating: number;
@@ -19,15 +18,18 @@ export type IBook = {
   reviews: IReview[];
 };
 
+export type IBookParams = {
+  sortBy?: string;
+  limit?: number;
+  page?: number;
+  searchTerm?: string;
+  sort?: string;
+  genre?: string;
+  publicationYear?: string;
+};
+
 export type IAuthInputs = {
   email: string;
   password: string;
   confirmPassword?: string;
-};
-
-export type IResponse = {
-  statusCode: number;
-  success: boolean;
-  message?: string | null;
-  data?: any;
 };

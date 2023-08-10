@@ -10,13 +10,14 @@ import Rating from "react-rating";
 import { FaStar } from "react-icons/fa";
 import { useGetSingleBookQuery } from "@/redux/features/books/bookApi";
 import Loading from "@/components/Loading";
+import { format } from "date-fns";
 
 export default function BookDetails() {
   const { id } = useParams();
   const { data, isLoading } = useGetSingleBookQuery(id);
 
   //! Temporary code, should be replaced with redux
-  const author = true;
+  const author = false;
   //! Temporary code ends here
 
   const book: IBook = data?.data;
@@ -99,7 +100,7 @@ export default function BookDetails() {
             <p className="text-gray-200 mb-2">Author: {book?.author?.name}</p>
             <p className="text-gray-200 mb-2">Genre: {book?.genre}</p>
             <p className="text-gray-200 mb-2">
-              Publication Date: {book?.publicationDate}
+              Publication Date: {format(new Date(book.publicationDate), "PP")}
             </p>
           </div>
         </article>

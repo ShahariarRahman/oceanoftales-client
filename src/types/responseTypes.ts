@@ -7,14 +7,16 @@ export type IErrorResponse = {
   };
 };
 
+export type IMeta = {
+  page: number;
+  limit: number;
+  total: number;
+};
+
 export type IApiResponse<T> = {
   statusCode: number;
   success: boolean;
   message?: string | null;
-  meta?: {
-    page: number;
-    limit: number;
-    total: number;
-  };
+  meta?: IMeta;
   data?: T | null;
 };

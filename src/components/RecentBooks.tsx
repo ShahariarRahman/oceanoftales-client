@@ -1,22 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { IBook } from "@/types/globalTypes";
 import BookCard from "./BookCard";
+import { useGetBooksQuery } from "@/redux/features/books/bookApi";
+import BookSkeleton from "./BookSkeleton";
 
 export default function RecentBooks() {
-  const [books, setBooks] = useState<IBook[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  //! Dummy Data
-  useEffect(() => {
-    fetch("/books.json")
-      .then((response) => response.json())
-      .then((data) => setBooks(data.books));
-  }, []);
-  const latestBooks = books.slice(0, 10);
-  //! Dummy Data
+  const { data, isLoading } = useGetBooksQuery(
+    "/books?sortBy=publicationDate&limit=10",
+  );
+
+  const books: IBook[] = useMemo(() => data?.data || [], [data]);
 
   const sliderSettings = {
     dots: true,
@@ -72,14 +70,14 @@ export default function RecentBooks() {
       </div>
 
       <Slider {...sliderSettings} className="mt-12 rounded-2xl">
-        {latestBooks.map((book, index) => (
-          <BookCard book={book} key={index} />
-        ))}
+        {isLoading
+          ? [[...Array(10)].map((_, index) => <BookSkeleton key={index} />)]
+          : books.map((book, index) => <BookCard book={book} key={index} />)}
       </Slider>
 
       <div className="flex items-center justify-center mt-24">
         <span className="text-gray-600  border px-2 rounded">
-          {currentSlide + 1}/{latestBooks.length}
+          {currentSlide + 1}/{books.length}
         </span>
       </div>
     </div>

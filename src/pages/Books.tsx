@@ -1,41 +1,37 @@
 import BookCard from "@/components/BookCard";
-import { IBook } from "@/types/globalTypes";
+import { IBook, IBookParams } from "@/types/globalTypes";
 import BookFilter from "@/components/BookFilter";
 import { useGetBooksQuery } from "@/redux/features/books/bookApi";
 import BookSkeleton from "@/components/BookSkeleton";
 import { useMemo, useState } from "react";
 import { BsBookHalf } from "react-icons/bs";
 import { TiWarningOutline } from "react-icons/ti";
-import { IErrorResponse } from "@/types/responseTypes";
+import { IApiResponse, IErrorResponse } from "@/types/responseTypes";
 import { Button } from "@/components/ui/button";
+import Pagination from "@/components/Pagination";
 
 export default function Books() {
-  const [url, setUrl] = useState<string>("/books");
+  const [params, setParams] = useState<IBookParams>({
+    sortBy: "publicationDate",
+    limit: 6,
+  });
+
   const { data, isLoading, refetch, isFetching, isError, error } =
-    useGetBooksQuery(url);
+    useGetBooksQuery(params);
 
-  const books = useMemo(() => {
-    return (
-      (data?.data &&
-        [...data.data]?.sort(
-          (a: IBook, b: IBook) =>
-            new Date(b.publicationDate).getTime() -
-            new Date(a.publicationDate).getTime(),
-        )) ||
-      []
-    );
+  const { data: books, meta }: IApiResponse<IBook[]> = useMemo(() => {
+    console.log("book fetched");
+    return data || [];
   }, [data]);
-
-  console.log(error);
 
   return (
     <section className="max-w-lg lg:max-w-7xl mx-auto relative px-4 xl:px-0">
       <div className="lg:grid grid-cols-12 gap-5">
-        <aside className="col-span-3">
-          <BookFilter setUrl={setUrl} refetch={refetch} />
+        <aside className="col-span-3 my-4">
+          <BookFilter params={params} setParams={setParams} refetch={refetch} />
         </aside>
-        <div className="col-span-9">
-          <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-10 pb-20">
+        <div className="flex flex-col justify-between col-span-9 min-h-screen">
+          <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-10">
             {!isLoading && !isFetching && books?.length ? (
               books?.map((book: IBook) => (
                 <BookCard
@@ -44,7 +40,7 @@ export default function Books() {
                   className="shadow-md hover:shadow-2xl"
                 />
               ))
-            ) : !isLoading && !isFetching && !isError && !books.length ? (
+            ) : !isLoading && !isFetching && !isError && !books?.length ? (
               <div className="flex flex-col items-center justify-center m-10">
                 <BsBookHalf className="w-12 h-12 text-gray-500 mb-4" />
                 <h2 className="text-2xl font-semibold text-gray-800 mb-2">
@@ -76,7 +72,7 @@ export default function Books() {
               </div>
             ) : (
               [
-                [...Array(12)].map((_, index) => (
+                [...Array(6)].map((_, index) => (
                   <BookSkeleton
                     key={index}
                     className="shadow-md hover:shadow-2xl"
@@ -85,6 +81,7 @@ export default function Books() {
               ]
             )}
           </div>
+          <Pagination params={params} setParams={setParams} meta={meta} />
         </div>
       </div>
     </section>

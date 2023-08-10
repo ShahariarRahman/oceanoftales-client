@@ -6,7 +6,7 @@ export default function AddBook() {
       <div className="flex lg:grid grid-cols-2">
         <div className="w-full flex justify-center min-h-screen">
           <div className="flex flex-col items-center rounded-lg mx-5 sm:m-12 w-full bg-white">
-            <h4 className="mt-16 mb-1 text-xl font-bold text-gray-900">
+            <h4 className="mt-10 2xl:mt-16 mb-1 text-xl font-bold text-gray-900">
               Publish your new book
             </h4>
             <h6 className="mb-6 text-sm text-muted-foreground">

@@ -1,10 +1,11 @@
 import api from "../api/apiSlice";
+import { createParams } from "@/helpers/urlHelpers";
 
 export const bookApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getBooks: builder.query({
-      query: (url) => ({
-        url: url,
+      query: (params) => ({
+        url: `/books?${createParams(params)}`,
       }),
       providesTags: ["get-books"],
     }),

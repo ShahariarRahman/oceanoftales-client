@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect } from "react";
 import { Toaster } from "./components/ui/Toaster";
 import MainLayout from "./layouts/MainLayout";
@@ -5,7 +6,6 @@ import {
   useAuthStateQuery,
   useGenAccessTokenMutation,
 } from "./redux/features/auth/authApi";
-import { IResponse } from "./types/globalTypes";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import {
   setLoading,
@@ -15,9 +15,10 @@ import {
 import Loading from "./components/Loading";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./lib/firebase";
+import { IApiResponse } from "./types/responseTypes";
 
 type IGenTokenRes = {
-  data: IResponse;
+  data: IApiResponse<any>;
 };
 
 function App() {

@@ -1,107 +1,107 @@
 [
-    {
-        "title": "The Great Gatsby",
-        "author": "F. Scott Fitzgerald",
-        "genre": "Mystery",
-        "publicationDate": "April 10, 2012",
-        "rating": 4.75
-    },
-    {
-        "title": "To Kill a Mockingbird",
-        "author": "Harper Lee",
-        "genre": "Fiction",
-        "publicationDate": "July 11, 1960",
-        "rating": 4.65
-    },
-    {
-        "title": "1984",
-        "author": "George Orwell",
-        "genre": "Dystopian",
-        "publicationDate": "June 8, 1949",
-        "rating": 4.5
-    },
-    {
-        "title": "Pride and Prejudice",
-        "author": "Jane Austen",
-        "genre": "Romance",
-        "publicationDate": "January 28, 1813",
-        "rating": 4.8
-    },
-    {
-        "title": "The Lord of the Rings",
-        "author": "J.R.R. Tolkien",
-        "genre": "Fantasy",
-        "publicationDate": "July 29, 1954",
-        "rating": 4.9
-    },
-    {
-        "title": "Harry Potter and the Sorcerer's Stone",
-        "author": "J.K. Rowling",
-        "genre": "Fantasy",
-        "publicationDate": "June 26, 1997",
-        "rating": 4.7
-    },
-    {
-        "title": "The Catcher in the Rye",
-        "author": "J.D. Salinger",
-        "genre": "Coming-of-age",
-        "publicationDate": "July 16, 1951",
-        "rating": 4.25
-    },
-    {
-        "title": "The Hobbit",
-        "author": "J.R.R. Tolkien",
-        "genre": "Fantasy",
-        "publicationDate": "September 21, 1937",
-        "rating": 4.6
-    },
-    {
-        "title": "Frankenstein",
-        "author": "Mary Shelley",
-        "genre": "Gothic",
-        "publicationDate": "January 1, 1818",
-        "rating": 4.35
-    },
-    {
-        "title": "The Hunger Games",
-        "author": "Suzanne Collins",
-        "genre": "Dystopian",
-        "publicationDate": "September 14, 2008",
-        "rating": 4.4
-    },
-    {
-        "title": "Brave New World",
-        "author": "Aldous Huxley",
-        "genre": "Dystopian",
-        "publicationDate": "January 1, 1932",
-        "rating": 4.55
-    },
-    {
-        "title": "The Alchemist",
-        "author": "Paulo Coelho",
-        "genre": "Fiction",
-        "publicationDate": "April 25, 1988",
-        "rating": 4.6
-    },
-    {
-        "title": "One Hundred Years of Solitude",
-        "author": "Gabriel García Márquez",
-        "genre": "Magical Realism",
-        "publicationDate": "May 30, 1967",
-        "rating": 4.8
-    },
-    {
-        "title": "The Chronicles of Narnia: The Lion, the Witch and the Wardrobe",
-        "author": "C.S. Lewis",
-        "genre": "Fantasy",
-        "publicationDate": "October 16, 1950",
-        "rating": 4.7
-    },
-    {
-        "title": "The Picture of Dorian Gray",
-        "author": "Oscar Wilde",
-        "genre": "Gothic",
-        "publicationDate": "June 20, 1890",
-        "rating": 4.4
-    }
+  {
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "genre": "Mystery",
+    "publicationDate": "April 10, 2012",
+    "rating": 4.75
+  },
+  {
+    "title": "To Kill a Mockingbird",
+    "author": "Harper Lee",
+    "genre": "Fiction",
+    "publicationDate": "July 11, 1960",
+    "rating": 4.65
+  },
+  {
+    "title": "1984",
+    "author": "George Orwell",
+    "genre": "Dystopian",
+    "publicationDate": "June 8, 1949",
+    "rating": 4.5
+  },
+  {
+    "title": "Pride and Prejudice",
+    "author": "Jane Austen",
+    "genre": "Romance",
+    "publicationDate": "January 28, 1813",
+    "rating": 4.8
+  },
+  {
+    "title": "The Lord of the Rings",
+    "author": "J.R.R. Tolkien",
+    "genre": "Fantasy",
+    "publicationDate": "July 29, 1954",
+    "rating": 4.9
+  },
+  {
+    "title": "Harry Potter and the Sorcerer's Stone",
+    "author": "J.K. Rowling",
+    "genre": "Fantasy",
+    "publicationDate": "June 26, 1997",
+    "rating": 4.7
+  },
+  {
+    "title": "The Catcher in the Rye",
+    "author": "J.D. Salinger",
+    "genre": "Coming-of-age",
+    "publicationDate": "July 16, 1951",
+    "rating": 4.25
+  },
+  {
+    "title": "The Hobbit",
+    "author": "J.R.R. Tolkien",
+    "genre": "Fantasy",
+    "publicationDate": "September 21, 1937",
+    "rating": 4.6
+  },
+  {
+    "title": "Frankenstein",
+    "author": "Mary Shelley",
+    "genre": "Gothic",
+    "publicationDate": "January 1, 1818",
+    "rating": 4.35
+  },
+  {
+    "title": "The Hunger Games",
+    "author": "Suzanne Collins",
+    "genre": "Dystopian",
+    "publicationDate": "September 14, 2008",
+    "rating": 4.4
+  },
+  {
+    "title": "Brave New World",
+    "author": "Aldous Huxley",
+    "genre": "Dystopian",
+    "publicationDate": "January 1, 1932",
+    "rating": 4.55
+  },
+  {
+    "title": "The Alchemist",
+    "author": "Paulo Coelho",
+    "genre": "Fiction",
+    "publicationDate": "April 25, 1988",
+    "rating": 4.6
+  },
+  {
+    "title": "One Hundred Years of Solitude",
+    "author": "Gabriel García Márquez",
+    "genre": "Magical Realism",
+    "publicationDate": "May 30, 1967",
+    "rating": 4.8
+  },
+  {
+    "title": "The Chronicles of Narnia: The Lion, the Witch and the Wardrobe",
+    "author": "C.S. Lewis",
+    "genre": "Fantasy",
+    "publicationDate": "October 16, 1950",
+    "rating": 4.7
+  },
+  {
+    "title": "The Picture of Dorian Gray",
+    "author": "Oscar Wilde",
+    "genre": "Gothic",
+    "publicationDate": "June 20, 1890",
+    "rating": 4.4
+  }
 ]

@@ -8,6 +8,7 @@ import { bookGenres } from "@/constant/book";
 import { useForm, Controller, SubmitHandler, useWatch } from "react-hook-form";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import Select from "react-select";
+import { IBookParams } from "@/types/globalTypes";
 
 type ISearch = {
   search: string;
@@ -21,11 +22,12 @@ type IFilter = {
 };
 
 type Props = {
-  setUrl: Dispatch<SetStateAction<string>>;
-  refetch: () => any;
+  params: IBookParams;
+  setParams: Dispatch<SetStateAction<IBookParams>>;
+  refetch?: () => any;
 };
 
-export default function BookFilter({ setUrl }: Props) {
+export default function BookFilter({ params, setParams }: Props) {
   const { control: searchControl, handleSubmit: searchHandleSubmit } =
     useForm<ISearch>({
       defaultValues: {
@@ -52,20 +54,28 @@ export default function BookFilter({ setUrl }: Props) {
       const checkedGenres = Object.keys(genres).filter(
         (genre) => genres[genre],
       );
-      if (!checkedGenres.length) {
-        setUrl(`/books`);
+      if (!checkedGenres.length && params?.genre) {
+        const { genre, ...rest } = params;
+        console.log(genre);
+        setParams({ ...rest, page: 1 });
       }
     }
-  }, [genres, setUrl]);
+  }, [genres, params, setParams]);
 
   useEffect(() => {
-    if (!search?.length) {
-      setUrl(`/books`);
+    if (!search?.length && params?.searchTerm) {
+      const { searchTerm, ...rest } = params;
+      setParams({ ...rest, page: 1 });
+      console.log(searchTerm);
     }
-  }, [search, setUrl]);
+  }, [search, setParams, params]);
 
   const handleSearch: SubmitHandler<ISearch> = (data) => {
-    setUrl(`books?searchTerm=${data.search}`);
+    setParams({
+      ...params,
+      searchTerm: data.search,
+      page: 1,
+    });
   };
 
   const handleFilter: SubmitHandler<IFilter> = (data) => {
@@ -74,26 +84,34 @@ export default function BookFilter({ setUrl }: Props) {
       (genre) => data.genres[genre],
     );
 
-    if (data && data.fromYear && data.toYear && genres.length) {
+    if (data && genres.length) {
       const filter = {
-        fromYear: data.fromYear,
-        toYear: data.toYear,
+        fromYear: data?.fromYear,
+        toYear: data?.toYear,
         genres,
       };
       console.log(filter);
       // setUrl(
       //   `books?genre=${filter.genres}&publicationDate=${filter.fromYear},${filter.toYear}`,
       // );
-      setUrl(`books?genre=${filter.genres}`);
+      setParams({
+        ...params,
+        page: 1,
+        genre: filter.genres.join(","),
+      });
+      console.log(genres);
+      // setUrl(`books?genre=${filter.genres}`);
     }
     if (!genres.length) {
-      setUrl(`/books`);
+      const { genre, ...rest } = params;
+      console.log(genre);
+      setParams(rest);
     }
     console.log(data);
   };
 
   return (
-    <div className="flex flex-col items-center space-y-4 my-5">
+    <div className="flex flex-col items-center space-y-4 sticky top-20">
       <form
         onSubmit={searchHandleSubmit(handleSearch)}
         className="w-full flex justify-between gap-3 items-center"
