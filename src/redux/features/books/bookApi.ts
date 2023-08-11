@@ -1,10 +1,11 @@
+import { IBookParams } from "@/types/globalTypes";
 import api from "../api/apiSlice";
 import { createParams } from "@/helpers/urlHelpers";
 
 export const bookApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getBooks: builder.query({
-      query: (params) => ({
+      query: (params: IBookParams) => ({
         url: `/books?${createParams(params)}`,
       }),
       providesTags: ["get-books"],
@@ -22,6 +23,14 @@ export const bookApi = api.injectEndpoints({
         body: data,
       }),
     }),
+    updateBook: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/books/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["get-books", "get-single-books"],
+    }),
   }),
 });
 
@@ -29,4 +38,5 @@ export const {
   useGetBooksQuery,
   useGetSingleBookQuery,
   usePostSingleBookMutation,
+  useUpdateBookMutation,
 } = bookApi;

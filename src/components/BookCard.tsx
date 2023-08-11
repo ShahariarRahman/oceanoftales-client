@@ -21,28 +21,26 @@ export default function BookCard({ book, className }: IBookCardProps) {
 
   return (
     <div className={`rounded-lg p-6 hover:scale-105 duration-100 ${className}`}>
-      <Link to={`/book/${book._id}`}>
+      <Link to={`/book/${book?._id}`}>
         <img
-          src={book.imageUrl}
-          alt={book.title}
+          src={book?.imageUrl}
+          alt={book?.title}
           className="w-full h-64 object-contain mb-6 rounded-lg"
         />
       </Link>
       <p className="text-yellow-500 flex">
-        {
-          <Rating
-            readonly
-            initialRating={book?.rating || 0}
-            fullSymbol={<FaStar className="w-4 h-4 fill-yellow-400" />}
-            emptySymbol={<FaStar className="w-4 h-4 fill-gray-300" />}
-          />
-        }
+        <Rating
+          readonly
+          initialRating={book?.rating || 0}
+          fullSymbol={<FaStar className="w-4 h-4 fill-yellow-400" />}
+          emptySymbol={<FaStar className="w-4 h-4 fill-gray-300" />}
+        />
       </p>
-      <h2 className="text-xl font-semibold">{book.title}</h2>
-      <p className="text-gray-600 text-sm">Author: {book.author?.name}</p>
-      <p className="text-purple-700 font-semibold mt-1">{book.genre}</p>
+      <h2 className="text-xl font-semibold">{book?.title}</h2>
+      <p className="text-gray-600 text-sm">Author: {book?.author?.name}</p>
+      <p className="text-purple-700 font-semibold mt-1">{book?.genre}</p>
       <p className="text-gray-700 mt-2 text-sm">
-        Publication Date: {format(new Date(book.publicationDate), "PP")}
+        Publication Date: {format(new Date(book?.publicationDate), "PP")}
       </p>
       <Button
         variant="default"

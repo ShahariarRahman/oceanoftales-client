@@ -20,6 +20,7 @@ import { v4 } from "uuid";
 import { bookFormValidation } from "@/validation/bookForm.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BiMessageError } from "react-icons/bi";
+import { RxCross2 } from "react-icons/rx";
 import { useAppSelector } from "@/redux/hooks";
 import { useState } from "react";
 import LoadingButton from "./LoadingButton";
@@ -46,7 +47,7 @@ export default function FormAddBook() {
       author: "",
       genre: undefined,
       publicationDate: new Date(),
-      imageUrl: undefined,
+      imageUrl: "",
     },
   });
 
@@ -87,7 +88,11 @@ export default function FormAddBook() {
     }
 
     // validating data
-    if (Object.keys(data).length < 5) {
+    if (
+      Object.keys(data).length < 5 ||
+      !data.imageUrl ||
+      typeof data.imageUrl === "string"
+    ) {
       return SwalToast.warn.fire("Invalid Form", "Provide valid data in form");
     }
 
@@ -109,7 +114,6 @@ export default function FormAddBook() {
     const snapshot = await uploadBytes(storageRef, imageUrl);
     const downloadURL = await getDownloadURL(snapshot.ref);
     const image = downloadURL.split("&token")[0];
-    console.log(image);
     formattedData.imageUrl = image;
 
     // database and api
@@ -169,7 +173,6 @@ export default function FormAddBook() {
     errorMessage = fileRejections[0]?.errors[0]?.message;
   }
 
-  // return <Loading />;
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -302,17 +305,28 @@ export default function FormAddBook() {
           render={({ field }) => (
             <div
               {...getRootProps()}
-              className={`mt-2 border-dashed border-[1px] text-sm p-4 rounded-md ${
+              className={`mt-2 border-dashed border-[1px] text-sm p-2 rounded-md ${
                 isDragActive ? "border-blue-500" : "border-gray-300"
               }`}
             >
               <input {...getInputProps()} />
               {field.value ? (
-                <img
-                  src={URL.createObjectURL(field.value as File)}
-                  alt="Uploaded"
-                  className="w-full h-full"
-                />
+                <div className="relative flex justify-center">
+                  <img
+                    src={URL.createObjectURL(field.value as File)}
+                    alt="Uploaded"
+                    className="max-h-72"
+                  />
+                  <Button
+                    size="sm"
+                    onClick={() => setValue("imageUrl", null)}
+                    type="button"
+                    variant="secondary"
+                    className="mt-1 mr-1 p-2 h-6 text-red-500 rounded absolute top-0 right-0"
+                  >
+                    <RxCross2 />
+                  </Button>
+                </div>
               ) : (
                 <div className="text-gray-700">
                   {isDragActive ? (

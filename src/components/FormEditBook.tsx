@@ -20,18 +20,28 @@ import { v4 } from "uuid";
 import { bookFormValidation } from "@/validation/bookForm.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BiMessageError } from "react-icons/bi";
+import { RxCross2 } from "react-icons/rx";
 import { useAppSelector } from "@/redux/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LoadingButton from "./LoadingButton";
 import { SwalToast } from "./Toast";
-import { useNavigate } from "react-router-dom";
-import { usePostSingleBookMutation } from "@/redux/features/books/bookApi";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  useGetSingleBookQuery,
+  useUpdateBookMutation,
+} from "@/redux/features/books/bookApi";
 import { IApiResponse, IErrorResponse } from "@/types/responseTypes";
 import { IBook } from "@/types/globalTypes";
+import Loading from "./Loading";
 
 export default function FormEditBook() {
   const [loading, setLoading] = useState<boolean>(false);
   const { email } = useAppSelector((state) => state.auth.user);
+  const { id } = useParams();
+  const { data, isLoading: isGetLoading } = useGetSingleBookQuery(id);
+
+  const book: IBook = data?.data;
+
   const {
     handleSubmit,
     control,
@@ -50,7 +60,17 @@ export default function FormEditBook() {
     },
   });
 
-  const [postBook, { isLoading }] = usePostSingleBookMutation();
+  useEffect(() => {
+    if (book) {
+      setValue("title", book?.title);
+      setValue("author", book?.author?.name);
+      setValue("genre", { label: book?.genre, value: book?.genre });
+      setValue("publicationDate", new Date(book?.publicationDate));
+      setValue("imageUrl", book?.imageUrl);
+    }
+  }, [book, setValue]);
+
+  const [updateBook, { isLoading: isUpdateLoading }] = useUpdateBookMutation();
 
   const navigate = useNavigate();
 
@@ -72,22 +92,26 @@ export default function FormEditBook() {
       multiple: false,
     });
 
+  if (isGetLoading) {
+    return <Loading />;
+  }
+
   const onSubmit: SubmitHandler<IBookForm> = async (data) => {
     setLoading(true);
 
     // taking permission
     const submitProceed = await SwalToast.confirm.fire(
-      "Book Publication",
-      "Are you sure to publish your book?",
+      "Book Modification",
+      "Are you sure to update your book?",
     );
 
     if (!submitProceed.isConfirmed) {
       setLoading(false);
-      return SwalToast.warn.fire("Cancelled", "Book publication cancelled!");
+      return SwalToast.warn.fire("Cancelled", "Book update canceled!");
     }
 
     // validating data
-    if (Object.keys(data).length < 5) {
+    if (Object.keys(data).length < 5 || !data.imageUrl) {
       return SwalToast.warn.fire("Invalid Form", "Provide valid data in form");
     }
 
@@ -105,15 +129,23 @@ export default function FormEditBook() {
 
     // deploying image
     const { imageUrl } = data;
-    const storageRef = ref(storage, `image/${imageUrl.name + "." + v4()}`);
-    const snapshot = await uploadBytes(storageRef, imageUrl);
-    const downloadURL = await getDownloadURL(snapshot.ref);
-    const image = downloadURL.split("&token")[0];
-    console.log(image);
-    formattedData.imageUrl = image;
+    const random = v4();
+
+    if (typeof imageUrl !== "string") {
+      const storageRefPrev = ref(storage, book.imageUrl);
+      deleteObject(storageRefPrev);
+
+      const storageRef = ref(storage, `image/${imageUrl.name + "." + random}`);
+      const snapshot = await uploadBytes(storageRef, imageUrl);
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      const image = downloadURL.split("&token")[0];
+      formattedData.imageUrl = image;
+    } else {
+      formattedData.imageUrl = imageUrl;
+    }
 
     // database and api
-    const result: any = await postBook(formattedData);
+    const result: any = await updateBook({ id, data: formattedData });
 
     // show success message & visit
     if (result.data?.data?._id) {
@@ -124,18 +156,24 @@ export default function FormEditBook() {
       const bookId = bookResponseData.data?._id;
 
       const visitProceed = await SwalToast.succeedAndAsk.fire(
-        "Congratulations",
-        "Book publication successfully! click visit to see..",
+        "Update Successful",
+        "Book update successfully! click visit to see..",
       );
 
       if (visitProceed.isConfirmed) {
         navigate(`/book/${bookId}`);
       }
     } else {
-      await deleteObject(storageRef);
+      if (typeof imageUrl !== "string") {
+        const storageRef = ref(
+          storage,
+          `image/${imageUrl.name + "." + random}`,
+        );
+        await deleteObject(storageRef);
+      }
+
       setLoading(false);
       const errorData: IErrorResponse = result.error;
-
       const errorMessage = errorData?.data?.message
         .split(" ")
         .slice(0, 2)
@@ -154,7 +192,7 @@ export default function FormEditBook() {
   //     console.log(errors);
   //   }
   // }, [errors, fileRejections]);
-
+  console.log(errors);
   let errorMessage: string | undefined = "";
   if (Object.keys(errors).length > 0) {
     errorMessage =
@@ -169,7 +207,6 @@ export default function FormEditBook() {
     errorMessage = fileRejections[0]?.errors[0]?.message;
   }
 
-  // return <Loading />;
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -302,17 +339,32 @@ export default function FormEditBook() {
           render={({ field }) => (
             <div
               {...getRootProps()}
-              className={`mt-2 border-dashed border-[1px] text-sm p-4 rounded-md ${
+              className={`mt-2 border-dashed border-[1px] text-sm p-2 rounded-md ${
                 isDragActive ? "border-blue-500" : "border-gray-300"
               }`}
             >
               <input {...getInputProps()} />
               {field.value ? (
-                <img
-                  src={URL.createObjectURL(field.value as File)}
-                  alt="Uploaded"
-                  className="w-full h-full"
-                />
+                <div className="relative flex justify-center">
+                  <img
+                    src={
+                      typeof field.value === "string"
+                        ? field.value
+                        : URL.createObjectURL(field.value)
+                    }
+                    alt="Uploaded"
+                    className="max-h-72"
+                  />
+                  <Button
+                    size="sm"
+                    onClick={() => setValue("imageUrl", null)}
+                    type="button"
+                    variant="secondary"
+                    className="mt-1 mr-1 p-2 h-6 text-red-500 rounded absolute top-0 right-0"
+                  >
+                    <RxCross2 />
+                  </Button>
+                </div>
               ) : (
                 <div className="text-gray-700">
                   {isDragActive ? (
@@ -350,7 +402,7 @@ export default function FormEditBook() {
       </div>
       <div className="w-full flex sm:justify-end">
         <div className="grid sm:grid-cols-2 gap-3 sm:gap-5">
-          {loading || isLoading ? (
+          {loading || isUpdateLoading ? (
             <>
               <Button disabled variant="outline" type="button">
                 Reset
@@ -363,7 +415,7 @@ export default function FormEditBook() {
                 Reset
               </Button>
               <Button disabled={!!errorMessage?.length} type="submit">
-                Publish
+                Change
               </Button>
             </>
           )}

@@ -9,8 +9,8 @@ type BookReviewProps = {
 
 export default function BookReview({ reviews }: BookReviewProps) {
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="bg-white rounded-lg shadow-md p-4">
+    <div className="max-w-7xl mx-auto bg-white">
+      <div className="p-4">
         <h2 className="text-3xl font-semibold mb-4">Book Reviews</h2>
         <ul className="space-y-4">
           {reviews?.map((review: IReview, index: number) => (

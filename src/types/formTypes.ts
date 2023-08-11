@@ -7,5 +7,5 @@ export type IBookForm = {
     label: string;
   };
   publicationDate: Date | any;
-  imageUrl: File;
+  imageUrl: File | string | null;
 };

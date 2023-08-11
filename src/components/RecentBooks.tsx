@@ -10,9 +10,10 @@ import BookSkeleton from "./BookSkeleton";
 export default function RecentBooks() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const { data, isLoading } = useGetBooksQuery(
-    "/books?sortBy=publicationDate&limit=10",
-  );
+  const { data, isLoading } = useGetBooksQuery({
+    sortBy: "publicationDate",
+    limit: 10,
+  });
 
   const books: IBook[] = useMemo(() => data?.data || [], [data]);
 

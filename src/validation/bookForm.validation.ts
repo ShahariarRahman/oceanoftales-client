@@ -15,23 +15,34 @@ const addBookZodSchema = z.object({
     .nonempty({ message: "Author is required" })
     .min(5, { message: "Author name cannot be too short" })
     .max(28, { message: "Author name cannot be too long" }),
-  genre: z.object(
-    {
-      value: z
-        .string({ required_error: "Value name is required" })
-        .nonempty({ message: "Value is required" }),
-      label: z
-        .string({ required_error: "Label name is required" })
-        .nonempty({ message: "Label is required" }),
-    },
-    { required_error: "Genre is Required" },
-  ),
+  genre: z.union([
+    z.null().refine((value) => value, {
+      message: "Genre is Required",
+    }),
+    z.object(
+      {
+        value: z
+          .string({ required_error: "Value name is required" })
+          .nonempty({ message: "Value is required" }),
+        label: z
+          .string({ required_error: "Label name is required" })
+          .nonempty({ message: "Label is required" }),
+      },
+      { required_error: "Genre is Required" },
+    ),
+  ]),
   publicationDate: z
     .date()
     .refine((value) => isBefore(value, today) || isEqual(value, today), {
       message: "Publication date cannot be in the future",
     }),
-  imageUrl: z.instanceof(File, { message: "Image is required" }),
+  imageUrl: z.union([
+    z.null().refine((value) => value, {
+      message: "Image is required",
+    }),
+    z.string({ required_error: "Image is required" }),
+    z.instanceof(File, { message: "Image is required" }),
+  ]),
 });
 
 export const bookFormValidation = { addBookZodSchema };
