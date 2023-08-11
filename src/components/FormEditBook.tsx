@@ -1,65 +1,179 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { bookGenres } from "@/constant/book";
 import { Button } from "./ui/button";
 import { useDropzone } from "react-dropzone";
-import { IBook } from "@/types/globalTypes";
-import { useEffect } from "react";
+import { IBookForm } from "@/types/formTypes";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Select from "react-select";
+import { storage } from "@/lib/firebase";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
+import { v4 } from "uuid";
+import { bookFormValidation } from "@/validation/bookForm.validation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { BiMessageError } from "react-icons/bi";
+import { useAppSelector } from "@/redux/hooks";
+import { useState } from "react";
+import LoadingButton from "./LoadingButton";
+import { SwalToast } from "./Toast";
+import { useNavigate } from "react-router-dom";
+import { usePostSingleBookMutation } from "@/redux/features/books/bookApi";
+import { IApiResponse, IErrorResponse } from "@/types/responseTypes";
+import { IBook } from "@/types/globalTypes";
 
 export default function FormEditBook() {
+  const [loading, setLoading] = useState<boolean>(false);
+  const { email } = useAppSelector((state) => state.auth.user);
   const {
     handleSubmit,
     control,
     setValue,
     reset,
+    trigger,
     formState: { errors },
-  } = useForm<Partial<IBook>>();
+  } = useForm<IBookForm>({
+    resolver: zodResolver(bookFormValidation.addBookZodSchema),
+    defaultValues: {
+      title: "",
+      author: "",
+      genre: undefined,
+      publicationDate: new Date(),
+      imageUrl: undefined,
+    },
+  });
+
+  const [postBook, { isLoading }] = usePostSingleBookMutation();
+
+  const navigate = useNavigate();
 
   const { getRootProps, getInputProps, isDragActive, fileRejections, open } =
     useDropzone({
-      onDrop: async (acceptedFiles: File[]) => {
-        console.log(acceptedFiles);
+      onDrop: (acceptedFiles: File[]) => {
         if (acceptedFiles.length > 0) {
           const file = acceptedFiles[0];
           setValue("imageUrl", file);
+          trigger("imageUrl");
         }
       },
       noClick: true,
       accept: {
         "image/png": [".png"],
         "image/jpeg": [".jpg", ".jpeg"],
+        "image/bmp": [".bmp"],
       },
       multiple: false,
     });
 
-  const onSubmit: SubmitHandler<Partial<IBook>> = (data) => {
-    console.log(data);
-  };
+  const onSubmit: SubmitHandler<IBookForm> = async (data) => {
+    setLoading(true);
 
-  useEffect(() => {
-    if (Object.keys(errors).length) {
-      console.log(errors?.imageUrl);
+    // taking permission
+    const submitProceed = await SwalToast.confirm.fire(
+      "Book Publication",
+      "Are you sure to publish your book?",
+    );
+
+    if (!submitProceed.isConfirmed) {
+      setLoading(false);
+      return SwalToast.warn.fire("Cancelled", "Book publication cancelled!");
     }
-  }, [errors]);
 
-  const handleReset = () => {
-    reset({
-      title: "",
-      author: "",
-      genre: "",
-      publicationDate: new Date(),
-      imageUrl: null,
-    });
+    // validating data
+    if (Object.keys(data).length < 5) {
+      return SwalToast.warn.fire("Invalid Form", "Provide valid data in form");
+    }
+
+    // structuring data
+    const formattedData = {
+      title: data.title,
+      author: {
+        name: data.author,
+        email: email,
+      },
+      genre: data.genre.value,
+      publicationDate: data.publicationDate.toISOString(),
+      imageUrl: "",
+    };
+
+    // deploying image
+    const { imageUrl } = data;
+    const storageRef = ref(storage, `image/${imageUrl.name + "." + v4()}`);
+    const snapshot = await uploadBytes(storageRef, imageUrl);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    const image = downloadURL.split("&token")[0];
+    console.log(image);
+    formattedData.imageUrl = image;
+
+    // database and api
+    const result: any = await postBook(formattedData);
+
+    // show success message & visit
+    if (result.data?.data?._id) {
+      setLoading(false);
+      reset();
+
+      const bookResponseData: IApiResponse<IBook> = result.data;
+      const bookId = bookResponseData.data?._id;
+
+      const visitProceed = await SwalToast.succeedAndAsk.fire(
+        "Congratulations",
+        "Book publication successfully! click visit to see..",
+      );
+
+      if (visitProceed.isConfirmed) {
+        navigate(`/book/${bookId}`);
+      }
+    } else {
+      await deleteObject(storageRef);
+      setLoading(false);
+      const errorData: IErrorResponse = result.error;
+
+      const errorMessage = errorData?.data?.message
+        .split(" ")
+        .slice(0, 2)
+        .join(" ");
+
+      SwalToast.failed.fire(errorMessage, "");
+    }
   };
 
+  // * * Error Debugging
+  // useEffect(() => {
+  //   if (fileRejections[0]) {
+  //     console.log(fileRejections[0]);
+  //   }
+  //   if (Object.keys(errors).length) {
+  //     console.log(errors);
+  //   }
+  // }, [errors, fileRejections]);
+
+  let errorMessage: string | undefined = "";
+  if (Object.keys(errors).length > 0) {
+    errorMessage =
+      errors.title?.message ||
+      errors.author?.message ||
+      errors.genre?.message ||
+      (errors.publicationDate?.message as string) ||
+      errors.imageUrl?.message;
+  }
+
+  if (fileRejections.length) {
+    errorMessage = fileRejections[0]?.errors[0]?.message;
+  }
+
+  // return <Loading />;
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-5 max-w-md w-full"
+      className={`space-y-4 max-w-md w-full `}
     >
       <div>
         <Label className="sr-only font-bold" htmlFor="add-book-title">
@@ -68,7 +182,6 @@ export default function FormEditBook() {
         <Controller
           control={control}
           name="title"
-          defaultValue=""
           render={({ field }) => (
             <Input
               {...field}
@@ -77,7 +190,6 @@ export default function FormEditBook() {
               placeholder="Enter book title"
               autoCapitalize="none"
               autoCorrect="off"
-              required
             />
           )}
         />
@@ -89,7 +201,6 @@ export default function FormEditBook() {
         <Controller
           control={control}
           name="author"
-          defaultValue=""
           render={({ field }) => (
             <Input
               {...field}
@@ -98,7 +209,6 @@ export default function FormEditBook() {
               placeholder="Enter author name"
               autoCapitalize="none"
               autoCorrect="off"
-              required
             />
           )}
         />
@@ -114,52 +224,49 @@ export default function FormEditBook() {
           <Controller
             control={control}
             name="genre"
-            defaultValue=""
             render={({ field }) => (
-              <>
-                <Select
-                  {...field}
-                  options={
-                    bookGenres.map((genre) => ({
-                      value: genre,
-                      label: genre,
-                    })) as never
-                  }
-                  classNamePrefix="react-select"
-                  className="w-full rounded-md  text-sm"
-                  placeholder="Select genre"
-                  noOptionsMessage={() => "No genres available"}
-                  isSearchable={false}
-                  styles={{
-                    control: (provided) => ({
-                      ...provided,
+              <Select
+                {...field}
+                options={bookGenres.map((genre) => ({
+                  value: genre,
+                  label: genre,
+                }))}
+                value={field?.value || ""}
+                onChange={(e) => field.onChange(e)}
+                isClearable={true}
+                classNamePrefix="react-select"
+                className="w-full rounded-md text-sm"
+                placeholder="Select genre"
+                isSearchable={true}
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    border: "1px solid #e2e8f0",
+                    color: "#64748b",
+                    "&:hover": {
                       border: "1px solid #e2e8f0",
-                      color: "#64748b",
-                      "&:hover": {
-                        border: "1px solid #e2e8f0",
-                      },
-                      boxShadow: "none",
-                    }),
-                    option: (provided, state) => ({
-                      ...provided,
-                      color: state.isSelected ? "white" : "black",
-                      backgroundColor: state.isSelected ? "#3870ff" : "white",
-                      "&:hover": {
-                        backgroundColor: "#7398f7",
-                        color: "white",
-                      },
-                    }),
-                    singleValue: (provided) => ({
-                      ...provided,
-                      color: "#0f172a",
-                    }),
-                    placeholder: (provided) => ({
-                      ...provided,
-                      color: "#64748b",
-                    }),
-                  }}
-                />
-              </>
+                    },
+                    boxShadow: "none",
+                  }),
+                  option: (provided, state) => ({
+                    ...provided,
+                    color: state.isSelected ? "white" : "black",
+                    backgroundColor: state.isSelected ? "#3870ff" : "white",
+                    "&:hover": {
+                      backgroundColor: "#7398f7",
+                      color: "white",
+                    },
+                  }),
+                  singleValue: (provided) => ({
+                    ...provided,
+                    color: "#0f172a",
+                  }),
+                  placeholder: (provided) => ({
+                    ...provided,
+                    color: "#64748b",
+                  }),
+                }}
+              />
             )}
           />
         </div>
@@ -172,19 +279,15 @@ export default function FormEditBook() {
           </Label>
           <Controller
             control={control}
-            defaultValue={new Date()}
             name="publicationDate"
             render={({ field }) => (
-              <div className="w-full">
-                <DatePicker
-                  {...field}
-                  selected={field.value}
-                  onSelect={(date: Date) => setValue("publicationDate", date)}
-                  className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 mr-10"
-                  dateFormat="dd/MM/yyyy"
-                  required
-                />
-              </div>
+              <DatePicker
+                {...field}
+                selected={field.value}
+                onSelect={(date: Date) => setValue("publicationDate", date)}
+                className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 mr-10"
+                dateFormat="dd/MM/yyyy"
+              />
             )}
           />
         </div>
@@ -195,13 +298,11 @@ export default function FormEditBook() {
         </Label>
         <Controller
           control={control}
-          rules={{ required: true }}
           name="imageUrl"
-          defaultValue={null}
           render={({ field }) => (
             <div
               {...getRootProps()}
-              className={`mt-2 border-dashed border-2 text-sm p-4 rounded-md ${
+              className={`mt-2 border-dashed border-[1px] text-sm p-4 rounded-md ${
                 isDragActive ? "border-blue-500" : "border-gray-300"
               }`}
             >
@@ -213,19 +314,21 @@ export default function FormEditBook() {
                   className="w-full h-full"
                 />
               ) : (
-                <div className="text-gray-600">
+                <div className="text-gray-700">
                   {isDragActive ? (
                     <div>
-                      <p className="h-32 sm:h-20 px-2">Drop the image here</p>
+                      <p className="h-32 sm:h-32 ">Drop the image here</p>
                     </div>
                   ) : (
-                    <div className="h-32 sm:h-20 px-2 flex flex-col justify-center">
-                      <p>Drag an image here, or click to upload a file</p>
+                    <div className="h-32 sm:h-32 flex flex-col justify-center items-center">
+                      <p className="text-muted-foreground">
+                        Drag an image here, or click to upload a image
+                      </p>
                       <Button
                         onClick={open}
                         type="button"
                         variant="outline"
-                        className="mt-5 w-32"
+                        className="mt-5 mr-2"
                       >
                         Upload Image
                       </Button>
@@ -236,18 +339,34 @@ export default function FormEditBook() {
             </div>
           )}
         />
-        {fileRejections.length > 0 && (
-          <p className="mt-3 text-xs text-red-500">
-            {fileRejections[0]?.errors[0]?.message}
+        {errorMessage?.length ? (
+          <p className="mt-3 ml-1 text-sm flex items-center space-x-2 text-red-500 capitalize">
+            <span>{errorMessage}</span>
+            <BiMessageError />
           </p>
+        ) : (
+          <p className="mt-12"></p>
         )}
       </div>
       <div className="w-full flex sm:justify-end">
         <div className="grid sm:grid-cols-2 gap-3 sm:gap-5">
-          <Button variant="outline" type="button" onClick={handleReset}>
-            Reset
-          </Button>
-          <Button type="submit">Publish</Button>
+          {loading || isLoading ? (
+            <>
+              <Button disabled variant="outline" type="button">
+                Reset
+              </Button>
+              <LoadingButton value="" />
+            </>
+          ) : (
+            <>
+              <Button variant="outline" type="button" onClick={() => reset()}>
+                Reset
+              </Button>
+              <Button disabled={!!errorMessage?.length} type="submit">
+                Publish
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </form>

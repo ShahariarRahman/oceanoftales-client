@@ -17,8 +17,14 @@ type IFilter = {
   genres: {
     [genre: string]: boolean;
   };
-  fromYear: number;
-  toYear: number;
+  fromYear: {
+    label: number;
+    value: number;
+  };
+  toYear: {
+    label: number;
+    value: number;
+  };
 };
 
 type Props = {
@@ -39,34 +45,35 @@ export default function BookFilter({ params, setParams }: Props) {
     control: filterControl,
     reset: filterReset,
     handleSubmit: filterHandleSubmit,
-  } = useForm<IFilter>({
-    defaultValues: {
-      fromYear: undefined,
-      toYear: undefined,
-    },
-  });
+  } = useForm<IFilter>({});
 
-  const { genres } = useWatch({ control: filterControl });
   const { search } = useWatch({ control: searchControl });
 
-  useEffect(() => {
-    if (genres) {
-      const checkedGenres = Object.keys(genres).filter(
-        (genre) => genres[genre],
-      );
-      if (!checkedGenres.length && params?.genre) {
-        const { genre, ...rest } = params;
-        console.log(genre);
-        setParams({ ...rest, page: 1 });
-      }
-    }
-  }, [genres, params, setParams]);
+  //  * heavily rendering
+  // const { genres, fromYear, toYear } = useWatch({ control: filterControl });
+  // useEffect(() => {
+  //   if (genres) {
+  //     const checkedGenres = Object.keys(genres).filter(
+  //       (genre) => genres[genre],
+  //     );
+  //     if (!checkedGenres.length && params?.genre) {
+  //       const { genre, ...rest } = params;
+  //       setParams({ ...rest, page: 1 });
+  //       console.log({ genre });
+  //     }
+  //   }
+  //   if (!fromYear && !toYear && params.publicationDate?.length) {
+  //     const { publicationDate, ...rest } = params;
+  //     setParams({ ...rest, page: 1 });
+  //     console.log({ publicationDate });
+  //   }
+  // }, [genres, params, fromYear, toYear, setParams]);
 
   useEffect(() => {
     if (!search?.length && params?.searchTerm) {
       const { searchTerm, ...rest } = params;
       setParams({ ...rest, page: 1 });
-      console.log(searchTerm);
+      console.log({ searchTerm });
     }
   }, [search, setParams, params]);
 
@@ -79,39 +86,45 @@ export default function BookFilter({ params, setParams }: Props) {
   };
 
   const handleFilter: SubmitHandler<IFilter> = (data) => {
-    console.log(data);
-    const genres = Object.keys(data.genres).filter(
-      (genre) => data.genres[genre],
-    );
+    const { toYear, genres, fromYear } = data;
+    const filter: IBookParams = {};
 
-    if (data && genres.length) {
-      const filter = {
-        fromYear: data?.fromYear,
-        toYear: data?.toYear,
-        genres,
-      };
-      console.log(filter);
-      // setUrl(
-      //   `books?genre=${filter.genres}&publicationDate=${filter.fromYear},${filter.toYear}`,
-      // );
+    const genresData = Object.keys(genres).filter((genre) => genres[genre]);
+
+    if (genresData.length) {
+      filter.genre = genresData.join();
+    }
+    if (toYear || fromYear) {
+      const to = toYear?.value;
+      const from = fromYear?.value;
+      filter.publicationDate = [from, to].join();
+    }
+
+    if (Object.keys(filter).length) {
       setParams({
-        ...params,
         page: 1,
-        genre: filter.genres.join(","),
+        limit: 6,
+        sortBy: "publicationDate",
+        ...filter,
       });
-      console.log(genres);
-      // setUrl(`books?genre=${filter.genres}`);
+    } else {
+      setParams({
+        sortBy: "publicationDate",
+        limit: 6,
+      });
     }
-    if (!genres.length) {
-      const { genre, ...rest } = params;
-      console.log(genre);
-      setParams(rest);
-    }
-    console.log(data);
+  };
+
+  const handleReset = () => {
+    filterReset();
+    setParams({
+      sortBy: "publicationDate",
+      limit: 6,
+    });
   };
 
   return (
-    <div className="flex flex-col items-center space-y-4 sticky top-20">
+    <div className="flex flex-col items-center space-y-4 sticky top-20 text-sm">
       <form
         onSubmit={searchHandleSubmit(handleSearch)}
         className="w-full flex justify-between gap-3 items-center"
@@ -141,18 +154,19 @@ export default function BookFilter({ params, setParams }: Props) {
         onSubmit={filterHandleSubmit(handleFilter)}
         className="w-full max-w-md border border-gray-300 rounded-md p-4 text-gray-700"
       >
-        <h2 className="text-xl uppercase mb-3">Filter Options</h2>
+        <h2 className="text-lg uppercase mb-3">Filter Options</h2>
         <div className="mb-4">
-          <h3 className="text-lg uppercase mb-2">Genre</h3>
+          <h3 className="text-md uppercase mb-2">Genre</h3>
           {bookGenres.map((genre, index) => (
             <label key={index} className="flex items-center">
               <Controller
                 name={`genres.${genre}`}
                 control={filterControl}
                 defaultValue={false}
-                render={({ field: { onChange } }) => (
+                render={({ field: { onChange, value } }) => (
                   <Checkbox
-                    onCheckedChange={onChange}
+                    onCheckedChange={(e) => onChange(e)}
+                    checked={value}
                     value={genre}
                     className="mr-2"
                   />
@@ -167,12 +181,12 @@ export default function BookFilter({ params, setParams }: Props) {
           <div className="grid gap-2 mt-3">
             <Controller
               control={filterControl}
-              name="fromYear"
+              name="toYear"
               render={({ field }) => (
                 <Select
                   {...field}
                   options={(
-                    [...Array(27)].map((_, index) => 2001 + index) as any
+                    [...Array(224)].map((_, index) => 2024 - index) as any
                   ).map((year: object) => ({
                     value: year,
                     label: year,
@@ -180,8 +194,8 @@ export default function BookFilter({ params, setParams }: Props) {
                   value={field?.value || ""}
                   onChange={(e) => field.onChange(e)}
                   classNamePrefix="react-select"
-                  className="rounded-md text-md"
-                  placeholder="Select from year"
+                  className="rounded-md"
+                  placeholder="To year or range"
                   isSearchable={true}
                   isClearable={true}
                   menuPlacement="top"
@@ -218,12 +232,12 @@ export default function BookFilter({ params, setParams }: Props) {
             />
             <Controller
               control={filterControl}
-              name="toYear"
+              name="fromYear"
               render={({ field }) => (
                 <Select
                   {...field}
                   options={(
-                    [...Array(27)].map((_, index) => 2001 + index) as any
+                    [...Array(224)].map((_, index) => 2024 - index) as any
                   ).map((year: object) => ({
                     value: year,
                     label: year,
@@ -231,8 +245,8 @@ export default function BookFilter({ params, setParams }: Props) {
                   value={field?.value || ""}
                   onChange={(e) => field.onChange(e)}
                   classNamePrefix="react-select"
-                  className="rounded-md text-md"
-                  placeholder="Select to year"
+                  className="rounded-md"
+                  placeholder="From year or range"
                   isSearchable={true}
                   isClearable={true}
                   menuPlacement="top"
@@ -269,13 +283,18 @@ export default function BookFilter({ params, setParams }: Props) {
             />
           </div>
         </div>
-        <div className="flex justify-end mt-4">
-          <Button className="mr-2" type="submit">
+        <div className="flex justify-between mt-4">
+          <Button
+            className="w-20 mr-2 rounded"
+            size="sm"
+            variant="outline"
+            onClick={handleReset}
+          >
+            Reset
+          </Button>
+          <Button size="sm" className="w-20 rounded" type="submit">
             <BsFilterLeft size={18} />
             <span className="ml-1 whitespace-nowrap">Filter</span>
-          </Button>
-          <Button variant="outline" onClick={() => filterReset()}>
-            Reset
           </Button>
         </div>
       </form>

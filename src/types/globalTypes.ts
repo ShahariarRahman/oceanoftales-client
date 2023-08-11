@@ -25,7 +25,7 @@ export type IBookParams = {
   searchTerm?: string;
   sort?: string;
   genre?: string;
-  publicationYear?: string;
+  publicationDate?: string;
 };
 
 export type IAuthInputs = {

@@ -36,7 +36,7 @@ export default function Pagination({ meta, params, setParams }: IProps) {
   };
 
   return (
-    <div className="text-center my-28 ">
+    <div className="text-center my-28">
       <div className="flex justify-center">
         <p className="text-sm text-muted-foreground pb-4 border-b-[1px] w-3/4">
           {`Showing ${startItem}-${lastItem} of ${meta.total} books`}

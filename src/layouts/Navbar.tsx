@@ -159,7 +159,7 @@ export default function Navbar() {
                         <small> {user?.email}</small>
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="cursor-pointer">
+                      <DropdownMenuItem className="-pointer">
                         Profile
                       </DropdownMenuItem>
                       <DropdownMenuItem className="cursor-pointer">
