@@ -97,8 +97,6 @@ export default function FormEditBook() {
   }
 
   const onSubmit: SubmitHandler<IBookForm> = async (data) => {
-    setLoading(true);
-
     // taking permission
     const submitProceed = await SwalToast.confirm.fire(
       "Book Modification",
@@ -106,9 +104,10 @@ export default function FormEditBook() {
     );
 
     if (!submitProceed.isConfirmed) {
-      setLoading(false);
       return SwalToast.warn.fire("Cancelled", "Book update canceled!");
     }
+
+    setLoading(true);
 
     // validating data
     if (Object.keys(data).length < 5 || !data.imageUrl) {
@@ -127,13 +126,13 @@ export default function FormEditBook() {
       imageUrl: "",
     };
 
-    // deploying image
+    // deploying/managing image
     const { imageUrl } = data;
     const random = v4();
 
     if (typeof imageUrl !== "string") {
       const storageRefPrev = ref(storage, book.imageUrl);
-      deleteObject(storageRefPrev);
+      await deleteObject(storageRefPrev);
 
       const storageRef = ref(storage, `image/${imageUrl.name + "." + random}`);
       const snapshot = await uploadBytes(storageRef, imageUrl);
@@ -176,7 +175,7 @@ export default function FormEditBook() {
       const errorData: IErrorResponse = result.error;
       const errorMessage = errorData?.data?.message
         .split(" ")
-        .slice(0, 2)
+        .slice(0, 3)
         .join(" ");
 
       SwalToast.failed.fire(errorMessage, "");

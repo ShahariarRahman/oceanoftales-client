@@ -17,7 +17,9 @@ export default function Books() {
   });
 
   const { data, isLoading, refetch, isFetching, isError, error } =
-    useGetBooksQuery(params);
+    useGetBooksQuery(params, {
+      refetchOnMountOrArgChange: true,
+    });
 
   const { data: books, meta }: IApiResponse<IBook[]> = useMemo(() => {
     console.log("book fetched");
@@ -58,7 +60,12 @@ export default function Books() {
                     updates.
                   </p>
                   <Button
-                    onClick={() => refetch()}
+                    onClick={() =>
+                      setParams({
+                        sortBy: "publicationDate",
+                        limit: 6,
+                      })
+                    }
                     variant="outline"
                     size="sm"
                     className="mt-5 w-20 rounded"
@@ -79,7 +86,15 @@ export default function Books() {
                   <p className="text-red-100 my-5 capitalize">
                     {(error as IErrorResponse)?.data?.message}
                   </p>
-                  <Button onClick={() => refetch()} variant="secondary">
+                  <Button
+                    onClick={() =>
+                      setParams({
+                        sortBy: "publicationDate",
+                        limit: 6,
+                      })
+                    }
+                    variant="secondary"
+                  >
                     Try Again
                   </Button>
                 </div>

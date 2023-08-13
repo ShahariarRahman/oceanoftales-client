@@ -39,6 +39,12 @@ export default function RecentBooks() {
     ),
     responsive: [
       {
+        breakpoint: 1280,
+        settings: {
+          slidesToShow: 3,
+        },
+      },
+      {
         breakpoint: 1024,
         settings: {
           slidesToShow: 2,
@@ -73,11 +79,13 @@ export default function RecentBooks() {
       <Slider {...sliderSettings} className="mt-12 rounded-2xl">
         {isLoading
           ? [[...Array(10)].map((_, index) => <BookSkeleton key={index} />)]
-          : books.map((book, index) => <BookCard book={book} key={index} />)}
+          : books.map((book, index) => (
+              <BookCard className="mx-3 my-4 shadow" book={book} key={index} />
+            ))}
       </Slider>
 
       <div className="flex items-center justify-center mt-24">
-        <span className="text-gray-600  border px-2 rounded">
+        <span className="text-gray-600 border px-2 rounded">
           {currentSlide + 1}/{books.length}
         </span>
       </div>

@@ -1,5 +1,5 @@
 export type IReview = {
-  user: string;
+  user?: string;
   rating: number;
   comment: string;
 };

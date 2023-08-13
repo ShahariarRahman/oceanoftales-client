@@ -74,8 +74,6 @@ export default function FormAddBook() {
     });
 
   const onSubmit: SubmitHandler<IBookForm> = async (data) => {
-    setLoading(true);
-
     // taking permission
     const submitProceed = await SwalToast.confirm.fire(
       "Book Publication",
@@ -83,9 +81,10 @@ export default function FormAddBook() {
     );
 
     if (!submitProceed.isConfirmed) {
-      setLoading(false);
       return SwalToast.warn.fire("Cancelled", "Book publication cancelled!");
     }
+
+    setLoading(true);
 
     // validating data
     if (

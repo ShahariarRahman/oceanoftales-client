@@ -9,14 +9,16 @@ type BookReviewProps = {
 
 export default function BookReview({ reviews }: BookReviewProps) {
   return (
-    <div className="max-w-7xl mx-auto bg-white">
+    <section className="w-full min-h-screen bg-white text-gray-700  mx-auto mt-32 pt-10 pb-32">
       <div className="p-4">
-        <h2 className="text-3xl font-semibold mb-4">Book Reviews</h2>
+        <h2 className="text-3xl font-semibold mb-12">
+          Book Reviews ({reviews?.length})
+        </h2>
         <ul className="space-y-4">
           {reviews?.map((review: IReview, index: number) => (
             <li key={index} className="border-b border-gray-300 pb-4">
               <div className="flex items-center mb-2">
-                <span className="font-bold mr-2">{review.user}</span>
+                <span className="font-bold mr-2 text-sm">{review.user}</span>
                 <span className="text-yellow-500 flex">
                   {
                     <Rating
@@ -30,12 +32,12 @@ export default function BookReview({ reviews }: BookReviewProps) {
                   }
                 </span>
               </div>
-              <p className="text-lg">{review.comment}</p>
+              <p>{review.comment}</p>
             </li>
           ))}
         </ul>
         <BookReviewForm />
       </div>
-    </div>
+    </section>
   );
 }

@@ -35,10 +35,17 @@ const confirm = toastBase.mixin({
   icon: "question",
 });
 
+const confirmDelete = confirm.mixin({
+  confirmButtonColor: "#ff0000",
+  cancelButtonColor: "#3870ff",
+  confirmButtonText: "Delete",
+});
+
 const notify = toastBase.mixin({
   showConfirmButton: false,
   icon: "info",
 });
+
 const warn = toastBase.mixin({
   showConfirmButton: false,
   icon: "warning",
@@ -52,6 +59,9 @@ const notifyAndAsk = toastBase.mixin({
 
 const succeed = basePrompt.mixin({
   icon: "success",
+  timer: 2500,
+  showConfirmButton: false,
+  showCloseButton: false,
 });
 
 const succeedAndAsk = basePrompt.mixin({
@@ -73,6 +83,7 @@ const failedAndAsk = basePrompt.mixin({
 
 export const SwalToast = {
   confirm,
+  confirmDelete,
   succeed,
   succeedAndAsk,
   notify,
