@@ -30,14 +30,17 @@ import {
   useGetSingleBookQuery,
   useUpdateBookMutation,
 } from "@/redux/features/books/bookApi";
-import { IApiResponse, IErrorResponse } from "@/types/responseTypes";
+import { IApiResponse } from "@/types/responseTypes";
 import { IBook } from "@/types/globalTypes";
 import Loading from "./Loading";
+import { inputFieldHelper } from "@/helpers/inputFieldHelper";
+import { errorHandler } from "@/errors/errorHandler";
 
 export default function FormEditBook() {
   const [loading, setLoading] = useState<boolean>(false);
   const { email } = useAppSelector((state) => state.auth.user);
-  const { id } = useParams();
+  const params = useParams<string>();
+  const id = params.id!;
   const { data, isLoading: isGetLoading } = useGetSingleBookQuery(id);
 
   const book: IBook = data?.data;
@@ -62,11 +65,10 @@ export default function FormEditBook() {
 
   useEffect(() => {
     if (book) {
-      setValue("title", book?.title);
-      setValue("author", book?.author?.name);
-      setValue("genre", { label: book?.genre, value: book?.genre });
-      setValue("publicationDate", new Date(book?.publicationDate));
-      setValue("imageUrl", book?.imageUrl);
+      const defaultValues = inputFieldHelper.bookDefaultField(book);
+      Object.entries(defaultValues).forEach(([field, value]) => {
+        setValue(field as keyof IBookForm, value);
+      });
     }
   }, [book, setValue]);
 
@@ -115,16 +117,7 @@ export default function FormEditBook() {
     }
 
     // structuring data
-    const formattedData = {
-      title: data.title,
-      author: {
-        name: data.author,
-        email: email,
-      },
-      genre: data.genre.value,
-      publicationDate: data.publicationDate.toISOString(),
-      imageUrl: "",
-    };
+    const formattedData = inputFieldHelper.formatData(email!, data);
 
     // deploying/managing image
     const { imageUrl } = data;
@@ -170,15 +163,9 @@ export default function FormEditBook() {
         );
         await deleteObject(storageRef);
       }
-
       setLoading(false);
-      const errorData: IErrorResponse = result.error;
-      const errorMessage = errorData?.data?.message
-        .split(" ")
-        .slice(0, 3)
-        .join(" ");
 
-      SwalToast.failed.fire(errorMessage, "");
+      await errorHandler.showApiErrorMessage(result.error);
     }
   };
 

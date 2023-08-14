@@ -27,12 +27,14 @@ import LoadingButton from "./LoadingButton";
 import { SwalToast } from "./Toast";
 import { useNavigate } from "react-router-dom";
 import { usePostSingleBookMutation } from "@/redux/features/books/bookApi";
-import { IApiResponse, IErrorResponse } from "@/types/responseTypes";
+import { IApiResponse } from "@/types/responseTypes";
 import { IBook } from "@/types/globalTypes";
+import { inputFieldHelper } from "@/helpers/inputFieldHelper";
+import { errorHandler } from "@/errors/errorHandler";
 
 export default function FormAddBook() {
   const [loading, setLoading] = useState<boolean>(false);
-  const { email } = useAppSelector((state) => state.auth.user);
+  const { email } = useAppSelector((state) => state?.auth.user);
   const {
     handleSubmit,
     control,
@@ -96,16 +98,7 @@ export default function FormAddBook() {
     }
 
     // structuring data
-    const formattedData = {
-      title: data.title,
-      author: {
-        name: data.author,
-        email: email,
-      },
-      genre: data.genre.value,
-      publicationDate: data.publicationDate.toISOString(),
-      imageUrl: "",
-    };
+    const formattedData = inputFieldHelper.formatData(email!, data);
 
     // deploying image
     const { imageUrl } = data;
@@ -136,15 +129,10 @@ export default function FormAddBook() {
       }
     } else {
       await deleteObject(storageRef);
+
       setLoading(false);
-      const errorData: IErrorResponse = result.error;
 
-      const errorMessage = errorData?.data?.message
-        .split(" ")
-        .slice(0, 2)
-        .join(" ");
-
-      SwalToast.failed.fire(errorMessage, "");
+      await errorHandler.showApiErrorMessage(result.error);
     }
   };
 

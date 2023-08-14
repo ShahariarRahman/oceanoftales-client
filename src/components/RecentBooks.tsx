@@ -9,11 +9,15 @@ import BookSkeleton from "./BookSkeleton";
 
 export default function RecentBooks() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [autoRefetch, setAutoRefetch] = useState(false);
 
-  const { data, isLoading } = useGetBooksQuery({
-    sortBy: "publicationDate",
-    limit: 10,
-  });
+  const { data, isLoading, isError } = useGetBooksQuery(
+    {
+      sortBy: "publicationDate",
+      limit: 10,
+    },
+    { pollingInterval: autoRefetch ? 3000 : 0 },
+  );
 
   const books: IBook[] = useMemo(() => data?.data || [], [data]);
 
@@ -59,6 +63,13 @@ export default function RecentBooks() {
     ],
   };
 
+  if (isError && !autoRefetch) {
+    setAutoRefetch(true);
+  }
+  if (!isError && autoRefetch) {
+    setAutoRefetch(false);
+  }
+
   return (
     <div
       className="container mx-auto py-8 mb-24 scroll-smooth"
@@ -77,7 +88,7 @@ export default function RecentBooks() {
       </div>
 
       <Slider {...sliderSettings} className="mt-12 rounded-2xl">
-        {isLoading
+        {isLoading || isError
           ? [[...Array(10)].map((_, index) => <BookSkeleton key={index} />)]
           : books.map((book, index) => (
               <BookCard className="mx-3 my-4 shadow" book={book} key={index} />

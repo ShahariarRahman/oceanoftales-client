@@ -38,7 +38,7 @@ export default function BookCard({ book, className }: IBookCardProps) {
           <p className="text-yellow-500 flex whitespace-nowrap">
             <Rating
               readonly
-              initialRating={book?.rating || 4}
+              initialRating={book?.rating || 0}
               fullSymbol={<FaStar className="w-4 h-4 fill-yellow-400" />}
               emptySymbol={<FaStar className="w-4 h-4 fill-gray-300" />}
             />

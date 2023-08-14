@@ -1,5 +1,5 @@
 import BookReview from "@/components/BookReview";
-import { IBook, IReview } from "@/types/globalTypes";
+import { IBook } from "@/types/globalTypes";
 import { useParams } from "react-router-dom";
 import { useGetSingleBookQuery } from "@/redux/features/books/bookApi";
 import Loading from "@/components/Loading";
@@ -8,7 +8,7 @@ import BookDetailsManager from "@/components/BookDetailsManager";
 
 export default function BookDetails() {
   const { id } = useParams();
-  const { data, isLoading: isGetLoading } = useGetSingleBookQuery(id);
+  const { data, isLoading: isGetLoading } = useGetSingleBookQuery(id!);
 
   const book: IBook = data?.data;
 
@@ -20,36 +20,6 @@ export default function BookDetails() {
     return <BookNotFound />;
   }
 
-  //  ! test data
-  const reviews: IReview[] = [
-    {
-      user: "John Doe",
-      rating: 4,
-      comment: "Excellent product, met all my expectations.",
-    },
-    {
-      user: "Jane Smith",
-      rating: 5,
-      comment: "Outstanding service! Will definitely recommend to others.",
-    },
-    {
-      user: "Michael Johnson",
-      rating: 3,
-      comment: "Good quality, but could use some improvements.",
-    },
-    {
-      user: "Emily White",
-      rating: 4,
-      comment: "Great value for the price. Prompt delivery.",
-    },
-    {
-      user: "David Lee",
-      rating: 5,
-      comment: "Impressive customer support. Very satisfied with the purchase.",
-    },
-  ];
-  //  ! test data
-
   return (
     <div className="flex flex-col items-center relative">
       <aside
@@ -60,7 +30,7 @@ export default function BookDetails() {
       </aside>
       <div className="absolute top-20 max-w-7xl w-full h-96 mt-10 md:mt-0">
         <BookDetailsManager book={book} />
-        <BookReview reviews={reviews} />
+        <BookReview reviews={book?.reviews} />
       </div>
     </div>
   );

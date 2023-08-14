@@ -5,7 +5,7 @@ export type IReview = {
 };
 
 export type IBook = {
-  _id: string;
+  _id?: string;
   title: string;
   author: {
     email: string;
@@ -14,8 +14,8 @@ export type IBook = {
   genre: string;
   publicationDate: string;
   imageUrl: string;
-  rating: number;
-  reviews: IReview[];
+  rating?: number;
+  reviews?: IReview[];
 };
 
 export type IBookParams = {

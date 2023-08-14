@@ -4,27 +4,38 @@ import BookFilter from "@/components/BookFilter";
 import { useGetBooksQuery } from "@/redux/features/books/bookApi";
 import BookSkeleton from "@/components/BookSkeleton";
 import { useMemo, useState } from "react";
-import { TiWarningOutline } from "react-icons/ti";
-import { IApiResponse, IErrorResponse } from "@/types/responseTypes";
+import { IApiResponse } from "@/types/responseTypes";
 import { Button } from "@/components/ui/button";
 import Pagination from "@/components/Pagination";
 import bookNotFound from "@/assets/images/illustration/bookNotFound.png";
 
 export default function Books() {
+  const [autoRefetch, setAutoRefetch] = useState(false);
+
   const [params, setParams] = useState<IBookParams>({
     sortBy: "publicationDate",
     limit: 6,
   });
 
-  const { data, isLoading, refetch, isFetching, isError, error } =
-    useGetBooksQuery(params, {
+  const { data, isLoading, refetch, isFetching, isError } = useGetBooksQuery(
+    params,
+    {
       refetchOnMountOrArgChange: true,
-    });
+      pollingInterval: autoRefetch ? 3000 : 0,
+    },
+  );
 
   const { data: books, meta }: IApiResponse<IBook[]> = useMemo(() => {
     console.log("book fetched");
     return data || [];
   }, [data]);
+
+  if (isError && !autoRefetch) {
+    setAutoRefetch(true);
+  }
+  if (!isError && autoRefetch) {
+    setAutoRefetch(false);
+  }
 
   return (
     <section className="max-w-lg lg:max-w-7xl mx-auto relative px-4 2xl:px-0">
@@ -71,31 +82,6 @@ export default function Books() {
                     className="mt-5 w-20 rounded"
                   >
                     Back
-                  </Button>
-                </div>
-              </div>
-            ) : isError ? (
-              <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-                <div className="bg-red-600 text-white px-6 py-4 rounded-lg shadow-lg flex flex-col items-center">
-                  <div className="flex items-center">
-                    <TiWarningOutline className="h-6 w-6 text-red-100 mr-4" />
-                    <span className="font-bold text-xl">
-                      Oops! Something went wrong
-                    </span>
-                  </div>
-                  <p className="text-red-100 my-5 capitalize">
-                    {(error as IErrorResponse)?.data?.message}
-                  </p>
-                  <Button
-                    onClick={() =>
-                      setParams({
-                        sortBy: "publicationDate",
-                        limit: 6,
-                      })
-                    }
-                    variant="secondary"
-                  >
-                    Try Again
                   </Button>
                 </div>
               </div>

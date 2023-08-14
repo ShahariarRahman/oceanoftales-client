@@ -16,7 +16,7 @@ import { useDeleteBookMutation } from "@/redux/features/books/bookApi";
 import { SwalToast } from "./Toast";
 import { storage } from "@/lib/firebase";
 import { deleteObject, ref } from "firebase/storage";
-import { IErrorResponse } from "@/types/responseTypes";
+import { errorHandler } from "@/errors/errorHandler";
 
 type IProps = {
   book: IBook;
@@ -45,7 +45,7 @@ export default function BookDetailsManager({ book }: IProps) {
 
     setLoading(true);
     // database and api
-    const result: any = await deleteBook(book?._id);
+    const result: any = await deleteBook(book?._id as string);
 
     // show success message & visit
     if (result.data?.data?._id) {
@@ -61,14 +61,7 @@ export default function BookDetailsManager({ book }: IProps) {
       navigate("/books/");
     } else {
       setLoading(false);
-
-      const errorData: IErrorResponse = result.error;
-      const errorMessage = errorData?.data?.message
-        .split(" ")
-        .slice(0, 3)
-        .join(" ");
-
-      SwalToast.failed.fire(errorMessage, "");
+      await errorHandler.showApiErrorMessage(result.error);
     }
   };
 
@@ -89,7 +82,9 @@ export default function BookDetailsManager({ book }: IProps) {
             fullSymbol={<FaStar className="w-5 h-5 mt-1 fill-yellow-400" />}
             emptySymbol={<FaStar className="w-5 h-5 mt-1 fill-gray-300" />}
           />
-          <span className="ml-2 flex items-center">({0}) Ratings</span>
+          <span className="ml-2 flex items-center">
+            {`(${book.reviews?.length})`} Ratings
+          </span>
         </div>
       </aside>
       <div className="hidden col-span-1 md:flex justify-center items-center">

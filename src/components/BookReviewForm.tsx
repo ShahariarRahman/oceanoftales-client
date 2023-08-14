@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm, Controller } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import Rating from "react-rating";
@@ -10,29 +11,45 @@ import { ReviewFormValidation } from "@/validation/reviewForm.validation";
 import { BiMessageError } from "react-icons/bi";
 import { useAppSelector } from "@/redux/hooks";
 import LoadingButton from "./LoadingButton";
+import { useAddReviewMutation } from "@/redux/features/reviews/reviewApi";
+import { useParams } from "react-router-dom";
+import { SwalToast } from "./Toast";
+import { errorHandler } from "@/errors/errorHandler";
 
 export default function ReviewForm() {
+  const params = useParams();
+  const id = params.id!;
   const { email } = useAppSelector((state) => state.auth.user);
 
   const {
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<IReview>({
-    resolver: zodResolver(ReviewFormValidation.reviewBookSchema),
+    resolver: zodResolver(ReviewFormValidation.reviewBookZodSchema),
   });
 
-  // ! Temp
-  const isLoading = false;
-  // ! Temp
+  const [addReview, { isLoading }] = useAddReviewMutation();
 
-  const onSubmit: SubmitHandler<IReview> = (data) => {
-    const formattedData = {
-      user: email,
+  const onSubmit: SubmitHandler<IReview> = async (data) => {
+    const formattedData: IReview = {
+      user: email as string,
       comment: data.comment,
       rating: data.rating,
     };
-    console.log(formattedData);
+    const result: any = await addReview({ id, data: formattedData });
+    console.log(result);
+
+    if (result.data?.data?._id) {
+      reset();
+      await SwalToast.succeed.fire(
+        "Review added",
+        "Book update successfully! Thanks for ur feedback..",
+      );
+    } else {
+      await errorHandler.showApiErrorMessage(result.error);
+    }
   };
 
   let errorMessage: string | undefined = "";
@@ -48,9 +65,10 @@ export default function ReviewForm() {
           <Controller
             name="comment"
             control={control}
-            render={({ field }) => (
+            render={({ field: { onChange, value } }) => (
               <Textarea
-                {...field}
+                onChange={onChange}
+                value={value || ""}
                 rows={5}
                 placeholder="Write your review here..."
               />

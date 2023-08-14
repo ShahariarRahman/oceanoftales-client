@@ -18,7 +18,9 @@ export default function BookReview({ reviews }: BookReviewProps) {
           {reviews?.map((review: IReview, index: number) => (
             <li key={index} className="border-b border-gray-300 pb-4">
               <div className="flex items-center mb-2">
-                <span className="font-bold mr-2 text-sm">{review.user}</span>
+                <span className="font-semibold mr-2 mb-1 text-sm capitalize">
+                  {review?.user?.split("@")[0]}
+                </span>
                 <span className="text-yellow-500 flex">
                   {
                     <Rating

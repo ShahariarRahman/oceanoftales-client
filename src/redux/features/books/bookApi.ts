@@ -1,6 +1,11 @@
-import { IBookParams } from "@/types/globalTypes";
+import { IBook, IBookParams } from "@/types/globalTypes";
 import api from "../api/apiSlice";
 import { createParams } from "@/helpers/urlHelpers";
+
+type IUpdateBook = {
+  id: string;
+  data: IBook;
+};
 
 export const bookApi = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -11,20 +16,21 @@ export const bookApi = api.injectEndpoints({
       providesTags: ["get-books"],
     }),
     getSingleBook: builder.query({
-      query: (id) => ({
+      query: (id: string) => ({
         url: `/books/${id}`,
       }),
       providesTags: ["get-single-books"],
     }),
     postSingleBook: builder.mutation({
-      query: (data) => ({
+      query: (data: IBook) => ({
         url: `/books/`,
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["get-books", "get-single-books"],
     }),
     updateBook: builder.mutation({
-      query: ({ id, data }) => ({
+      query: ({ id, data }: IUpdateBook) => ({
         url: `/books/${id}`,
         method: "PATCH",
         body: data,
@@ -32,11 +38,12 @@ export const bookApi = api.injectEndpoints({
       invalidatesTags: ["get-books", "get-single-books"],
     }),
     deleteBook: builder.mutation({
-      query: (id) => ({
+      query: (id: string) => ({
         url: `/books/${id}`,
         method: "DELETE",
         body: {},
       }),
+      invalidatesTags: ["get-books", "get-single-books"],
     }),
   }),
 });
