@@ -165,7 +165,10 @@ export default function FormEditBook() {
       }
       setLoading(false);
 
-      await errorHandler.showApiErrorMessage(result.error);
+      await errorHandler.showError(result.error, {
+        title: "Failed to Update",
+        des: "Failed to update your book",
+      });
     }
   };
 
@@ -393,7 +396,7 @@ export default function FormEditBook() {
               <Button disabled variant="outline" type="button">
                 Reset
               </Button>
-              <LoadingButton value="" />
+              <LoadingButton btnClass="duration-300" />
             </>
           ) : (
             <>

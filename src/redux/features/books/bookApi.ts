@@ -1,6 +1,6 @@
 import { IBook, IBookParams } from "@/types/globalTypes";
 import api from "../api/apiSlice";
-import { createParams } from "@/helpers/urlHelpers";
+import { urlHelper } from "@/helpers/urlHelpers";
 
 type IUpdateBook = {
   id: string;
@@ -11,7 +11,7 @@ export const bookApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getBooks: builder.query({
       query: (params: IBookParams) => ({
-        url: `/books?${createParams(params)}`,
+        url: `/books?${urlHelper.createParams(params)}`,
       }),
       providesTags: ["get-books"],
     }),

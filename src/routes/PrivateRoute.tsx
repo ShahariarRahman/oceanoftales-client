@@ -8,7 +8,6 @@ type IProps = {
 
 export default function PrivateRoute({ children }: IProps) {
   const email = useAppSelector((state) => state.auth.user.email);
-
   const location = useLocation();
 
   if (!email) {

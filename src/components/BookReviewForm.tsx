@@ -16,7 +16,11 @@ import { useParams } from "react-router-dom";
 import { SwalToast } from "./Toast";
 import { errorHandler } from "@/errors/errorHandler";
 
-export default function ReviewForm() {
+type IProps = {
+  isAuthor: boolean;
+};
+
+export default function ReviewForm({ isAuthor }: IProps) {
   const params = useParams();
   const id = params.id!;
   const { email } = useAppSelector((state) => state.auth.user);
@@ -45,10 +49,13 @@ export default function ReviewForm() {
       reset();
       await SwalToast.succeed.fire(
         "Review added",
-        "Book update successfully! Thanks for ur feedback..",
+        "Review added successfully! Thanks for ur feedback..",
       );
     } else {
-      await errorHandler.showApiErrorMessage(result.error);
+      await errorHandler.showError(result.error, {
+        title: "Failed to review",
+        des: "Failed to share book review",
+      });
     }
   };
 
@@ -59,14 +66,20 @@ export default function ReviewForm() {
 
   return (
     <div className="mt-8 border-gray-300 pt-4 sm:w-3/4">
-      <h3 className="text-2xl font-semibold mb-8">Write New Review</h3>
+      <h3 className="text-2xl font-semibold">Write New Review</h3>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex flex-col space-y-4">
+        <div
+          title={isAuthor ? "You cannot review your own book" : ""}
+          className={`flex flex-col space-y-4 pt-8 ${
+            isAuthor && "cursor-not-allowed"
+          }`}
+        >
           <Controller
             name="comment"
             control={control}
             render={({ field: { onChange, value } }) => (
               <Textarea
+                disabled={isAuthor}
                 onChange={onChange}
                 value={value || ""}
                 rows={5}
@@ -80,6 +93,7 @@ export default function ReviewForm() {
               control={control}
               render={({ field: { onChange, value } }) => (
                 <Rating
+                  readonly={isAuthor}
                   onChange={onChange}
                   initialRating={value}
                   fullSymbol={<FaStar className="w-5 h-5 fill-yellow-400" />}
@@ -97,14 +111,19 @@ export default function ReviewForm() {
           <div className="whitespace-nowrap pt-4">
             {!isLoading ? (
               <Button
-                disabled={!!errorMessage && errorMessage?.length > 0}
+                disabled={
+                  !!(errorMessage && errorMessage?.length > 0) || isAuthor
+                }
                 type="submit"
                 className="w-28"
               >
                 Share Review
               </Button>
             ) : (
-              <LoadingButton className="w-28" />
+              <LoadingButton
+                btnClass="duration-300"
+                className="w-28 bg-primary/70 hover:bg-primary/60"
+              />
             )}
           </div>
         </div>

@@ -132,7 +132,10 @@ export default function FormAddBook() {
 
       setLoading(false);
 
-      await errorHandler.showApiErrorMessage(result.error);
+      await errorHandler.showError(result.error, {
+        title: "Failed to Publish",
+        des: "Failed to publish your book",
+      });
     }
   };
 
@@ -356,7 +359,10 @@ export default function FormAddBook() {
               <Button disabled variant="outline" type="button">
                 Reset
               </Button>
-              <LoadingButton value="" />
+              <LoadingButton
+                btnClass="duration-300"
+                className="bg-primary/70 hover:bg-primary/60"
+              />
             </>
           ) : (
             <>

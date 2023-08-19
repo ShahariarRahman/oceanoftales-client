@@ -4,10 +4,11 @@ import { FaStar } from "react-icons/fa";
 import BookReviewForm from "./BookReviewForm";
 
 type BookReviewProps = {
-  reviews: IReview[] | undefined;
+  reviews?: IReview[];
+  isAuthor: boolean;
 };
 
-export default function BookReview({ reviews }: BookReviewProps) {
+export default function BookReview({ reviews, isAuthor }: BookReviewProps) {
   return (
     <section className="w-full min-h-screen bg-white text-gray-700  mx-auto mt-32 pt-10 pb-32">
       <div className="p-4">
@@ -18,7 +19,10 @@ export default function BookReview({ reviews }: BookReviewProps) {
           {reviews?.map((review: IReview, index: number) => (
             <li key={index} className="border-b border-gray-300 pb-4">
               <div className="flex items-center mb-2">
-                <span className="font-semibold mr-2 mb-1 text-sm capitalize">
+                <span
+                  title={review?.user}
+                  className="font-semibold mr-2 mb-1 text-sm capitalize"
+                >
                   {review?.user?.split("@")[0]}
                 </span>
                 <span className="text-yellow-500 flex">
@@ -38,7 +42,7 @@ export default function BookReview({ reviews }: BookReviewProps) {
             </li>
           ))}
         </ul>
-        <BookReviewForm />
+        <BookReviewForm isAuthor={isAuthor} />
       </div>
     </section>
   );

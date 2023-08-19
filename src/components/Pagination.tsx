@@ -36,68 +36,88 @@ export default function Pagination({ meta, params, setParams }: IProps) {
   };
 
   return (
-    <div className="text-center my-28">
-      <div className="flex justify-center">
-        <p className="text-sm text-muted-foreground pb-4 border-b-[1px] w-3/4">
-          {`Showing ${startItem}-${lastItem} of ${meta.total} books`}
-        </p>
-      </div>
-      <div className="flex justify-evenly gap-3 text-xs font-medium mt-5 items-center">
-        <Button
-          onClick={() => handlePage(1)}
-          size="sm"
-          variant="outline"
-          disabled={meta.page === 1}
-        >
-          <RiArrowLeftDoubleFill size={16} />
-        </Button>
-        <div className="flex gap-3 items-center">
+    <div className="my-20 caret-transparent">
+      <p className="text-sm text-muted-foreground pb-4 border-b-[1px] w-full">
+        {`Showing ${startItem}-${lastItem} of ${meta.total} books`}
+      </p>
+      <div className="flex justify-between items-center mt-5">
+        <div className="flex gap-10 text-xs font-medium items-center">
           <Button
-            onClick={() => handlePage(meta.page - 1)}
-            className="w-8 p-0"
+            onClick={() => handlePage(1)}
             size="sm"
+            className="hidden w-8 p-0 hover:scale-105 sm:flex"
             variant="outline"
             disabled={meta.page === 1}
           >
-            <RiArrowLeftSLine size={16} />
+            <RiArrowLeftDoubleFill size={16} />
           </Button>
-          {meta.page > pageLen && (
-            <Button className="w-8 p-0" size="sm" variant="ghost" disabled>
-              <BsThreeDots size={16} />
-            </Button>
-          )}
-          {displayedPages.map((page) => (
+          <div className="flex gap-1 sm:gap-2 items-center">
             <Button
-              key={page}
+              onClick={() => handlePage(meta.page - 1)}
+              className="w-8 p-0 hover:scale-105"
               size="sm"
-              variant={meta.page === page ? "default" : "outline"}
-              onClick={() => handlePage(page)}
+              variant="outline"
+              disabled={meta.page === 1}
             >
-              {page}
+              <RiArrowLeftSLine size={16} />
             </Button>
-          ))}
-          {lessThanMaxLen && notLastPage && (
-            <Button className="w-8 p-0" size="sm" variant="ghost" disabled>
-              <BsThreeDots size={16} />
+            {meta.page > pageLen && (
+              <Button
+                className="w-8 p-0 hover:scale-105"
+                size="sm"
+                variant="ghost"
+                disabled
+              >
+                <BsThreeDots size={16} />
+              </Button>
+            )}
+            {displayedPages.map((page) => (
+              <Button
+                key={page}
+                size="sm"
+                className="w-8 p-0 hover:scale-105"
+                variant={meta.page === page ? "default" : "outline"}
+                onClick={() => handlePage(page)}
+              >
+                <span>{page}</span>
+              </Button>
+            ))}
+            {lessThanMaxLen && notLastPage && (
+              <Button
+                className="w-8 p-0 hover:scale-105"
+                size="sm"
+                variant="ghost"
+                disabled
+              >
+                <BsThreeDots size={16} />
+              </Button>
+            )}
+            <Button
+              onClick={() => handlePage(meta.page + 1)}
+              className="w-8 p-0 hover:scale-105"
+              size="sm"
+              variant="outline"
+              disabled={meta.page === totalPages}
+            >
+              <RiArrowRightSLine size={16} />
             </Button>
-          )}
+          </div>
           <Button
-            onClick={() => handlePage(meta.page + 1)}
-            className="w-8 p-0"
+            onClick={() => handlePage(totalPages)}
             size="sm"
+            className="hidden w-8 p-0 hover:scale-105 sm:flex"
             variant="outline"
             disabled={meta.page === totalPages}
           >
-            <RiArrowRightSLine size={16} />
+            <RiArrowRightDoubleFill size={16} />
           </Button>
         </div>
         <Button
-          onClick={() => handlePage(totalPages)}
-          size="sm"
-          variant="outline"
-          disabled={meta.page === totalPages}
+          className="font-normal cursor-default hover:bg-inherit"
+          variant="ghost"
         >
-          <RiArrowRightDoubleFill size={16} />
+          <span className="mr-1 hidden sm:flex">Page - </span>
+          <span>{`${meta.page}/${totalPages}`}</span>
         </Button>
       </div>
     </div>

@@ -13,7 +13,16 @@ const api = createApi({
       return headers;
     },
   }),
-  tagTypes: ["get-books", "get-single-books"],
+  tagTypes: [
+    "get-books",
+    "get-single-books",
+    "get-single-wish",
+    "get-single-read",
+    "get-single-finish",
+    "get-wish",
+    "get-read",
+    "get-finish",
+  ],
   endpoints: () => ({}),
 });
 

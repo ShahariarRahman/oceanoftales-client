@@ -9,7 +9,7 @@ export default function LoadingButton({ value, className, btnClass }: IProps) {
   return (
     <button
       type="button"
-      className={`inline-flex justify-center items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-white bg-primary/70 hover:bg-primary/60 transition ease-in-out duration-150 cursor-not-allowed ${className} ml-[1px]`}
+      className={`inline-flex justify-center items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-white transition ease-in-out duration-150 cursor-not-allowed ${className} ml-[1px]`}
       disabled
     >
       <svg

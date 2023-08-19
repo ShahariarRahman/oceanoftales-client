@@ -1,12 +1,3 @@
-export type IErrorResponse = {
-  data: {
-    errorMessages: Array<object>;
-    message: string;
-    stack: string;
-    succuss: boolean;
-  };
-};
-
 export type IMeta = {
   page: number;
   limit: number;
@@ -19,4 +10,13 @@ export type IApiResponse<T> = {
   message?: string | null;
   meta?: IMeta;
   data?: T | null;
+};
+
+export type IErrorResponse = {
+  data: {
+    errorMessages: Array<object>;
+    message: string;
+    stack: string;
+    succuss: boolean;
+  };
 };

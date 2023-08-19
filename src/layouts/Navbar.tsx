@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Button } from "../components/ui/button";
 import { DropdownMenuSeparator } from "../components/ui/dropdown-menu";
@@ -24,6 +23,8 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setLoading, setUserEmail } from "@/redux/features/auth/authSlice";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import CustomLink from "@/routes/CustomLink";
+import avatar from "@/assets/images/illustration/avatar.png";
 
 export default function Navbar() {
   const { user, platform, isLoading } = useAppSelector((state) => state.auth);
@@ -52,7 +53,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="w-full h-16 fixed top backdrop-blur-lg z-10">
+    <nav className="w-full h-16 fixed top backdrop-blur-lg z-10 caret-transparent">
       <div className="h-full w-full bg-white/60">
         <div className="flex items-center justify-between w-full md:max-w-7xl h-full mx-auto">
           <Logo className="[&>p]:hidden [&>p]:lg:block" />
@@ -60,58 +61,58 @@ export default function Navbar() {
             <ul className="hidden md:flex items-center [&>li]:whitespace-nowrap">
               <li>
                 <Button variant="link" asChild>
-                  <Link to="/">
+                  <CustomLink to="/">
                     <span className="mr-1">
                       <AiOutlineHome />
                     </span>
                     <span>Home</span>
-                  </Link>
+                  </CustomLink>
                 </Button>
               </li>
               <li>
                 <Button variant="link" asChild>
-                  <Link to="/books">
+                  <CustomLink to="/books">
                     <span className="mr-1">
                       <GiBookshelf />
                     </span>
                     <span>Books</span>
-                  </Link>
+                  </CustomLink>
                 </Button>
               </li>
               {email && (
                 <>
                   <li>
                     <Button variant="link" asChild>
-                      <Link to="/add-new-book">
+                      <CustomLink to="/add-new-book">
                         <span className="mr-1">
                           <LuBookPlus />
                         </span>
                         <span>Add New Book</span>
-                      </Link>
+                      </CustomLink>
                     </Button>
                   </li>
                   <li>
                     <Button variant="link" asChild>
-                      <Link to="/reading-book">
+                      <CustomLink to="/reading-book">
                         <span className="mr-1">
                           <AiOutlineRead />
                         </span>
                         <span> Reading list</span>
-                      </Link>
+                      </CustomLink>
                     </Button>
                   </li>
                   <li>
                     <Button variant="link" asChild>
-                      <Link to="/wishlist-book">
+                      <CustomLink to="/wishlist-book">
                         <span className="mr-1">
                           <BsCartPlus />
                         </span>
                         <span>Wishlist</span>
-                      </Link>
+                      </CustomLink>
                     </Button>
                   </li>
                   <li className="cursor-pointer" onClick={handleSignOut}>
-                    <Button disabled={isLoading} variant="link">
+                    <Button disabled={isLoading} className="" variant="link">
                       <span className="flex justify-center items-center">
                         <span className="mr-1">
                           <RiLogoutBoxRLine />
@@ -122,16 +123,15 @@ export default function Navbar() {
                   </li>
                 </>
               )}
-
               {!email && (
                 <li>
                   <Button variant="link" asChild>
-                    <Link to="/login">
+                    <CustomLink to="/login">
                       <span className="mr-1">
                         <LuUserPlus />
                       </span>
                       <span>Sign In</span>
-                    </Link>
+                    </CustomLink>
                   </Button>
                 </li>
               )}
@@ -147,11 +147,13 @@ export default function Navbar() {
                   <DropdownMenu>
                     <DropdownMenuTrigger className="outline-none">
                       <Avatar>
-                        <AvatarImage src="https://github.com/shadcn.png" />
+                        <div>
+                          <AvatarImage className="bg-[#3870ff]" src={avatar} />
+                        </div>
                         <AvatarFallback>CN</AvatarFallback>
                       </Avatar>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent>
+                    <DropdownMenuContent className="w-52">
                       <DropdownMenuLabel>
                         <p className="capitalize">
                           {user.email?.split("@")[0]}
@@ -159,16 +161,21 @@ export default function Navbar() {
                         <small> {user?.email}</small>
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="-pointer">
+                      <DropdownMenuItem className="cursor-pointer">
+                        <CustomLink to="finished-book">
+                          Finished Book
+                        </CustomLink>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-not-allowed">
                         Profile
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-pointer">
+                      <DropdownMenuItem className="cursor-not-allowed">
                         Cart
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-pointer">
+                      <DropdownMenuItem className="cursor-not-allowed">
                         My Books
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-pointer">
+                      <DropdownMenuItem className="cursor-not-allowed">
                         Subscription
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -186,64 +193,76 @@ export default function Navbar() {
                 <DropdownMenuContent>
                   <DropdownMenuItem className="cursor-pointer">
                     <Button variant="link" asChild>
-                      <Link to="/">
+                      <CustomLink to="/">
                         <li className="w-52 flex justify-start items-center">
                           <span className="mr-1">
                             <AiOutlineHome />
                           </span>
                           <span>Home</span>
                         </li>
-                      </Link>
+                      </CustomLink>
                     </Button>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="cursor-pointer">
                     <Button variant="link" asChild>
-                      <Link to="/books">
+                      <CustomLink to="/books">
                         <li className="w-52 flex justify-start items-center">
                           <span className="mr-1">
                             <GiBookshelf />
                           </span>
                           <span>Books</span>
                         </li>
-                      </Link>
+                      </CustomLink>
                     </Button>
                   </DropdownMenuItem>
                   {email && (
                     <>
                       <DropdownMenuItem className="cursor-pointer">
                         <Button variant="link" asChild>
-                          <Link to="/add-new-book">
+                          <CustomLink to="/add-new-book">
                             <li className="w-52 flex justify-start items-center">
                               <span className="mr-1">
                                 <LuBookPlus />
                               </span>
                               <span>Add New Book</span>
                             </li>
-                          </Link>
+                          </CustomLink>
                         </Button>
                       </DropdownMenuItem>
                       <DropdownMenuItem className="cursor-pointer">
                         <Button variant="link" asChild>
-                          <Link to="/reading-book">
+                          <CustomLink to="/reading-book">
                             <li className="w-52 flex justify-start items-center">
                               <span className="mr-1">
                                 <AiOutlineRead />
                               </span>
                               <span> Reading list</span>
                             </li>
-                          </Link>
+                          </CustomLink>
                         </Button>
                       </DropdownMenuItem>
                       <DropdownMenuItem className="cursor-pointer">
                         <Button variant="link" asChild>
-                          <Link to="/wishlist-book">
+                          <CustomLink to="/wishlist-book">
                             <li className="w-52 flex justify-start items-center">
                               <span className="mr-1">
                                 <BsCartPlus />
                               </span>
                               <span>Wishlist</span>
                             </li>
-                          </Link>
+                          </CustomLink>
+                        </Button>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="cursor-pointer">
+                        <Button variant="link" asChild>
+                          <CustomLink to="/finished-book">
+                            <li className="w-52 flex justify-start items-center">
+                              <span className="mr-1">
+                                <BsCartPlus />
+                              </span>
+                              <span>Finished list</span>
+                            </li>
+                          </CustomLink>
                         </Button>
                       </DropdownMenuItem>
                       <DropdownMenuItem
@@ -251,14 +270,12 @@ export default function Navbar() {
                         className="cursor-pointer"
                       >
                         <Button disabled={isLoading} variant="link" asChild>
-                          <Link to="/login">
-                            <li className="w-52 flex justify-start items-center">
-                              <span className="mr-1">
-                                <RiLogoutBoxRLine />
-                              </span>
-                              <span>Sign Out</span>
-                            </li>
-                          </Link>
+                          <li>
+                            <span className="mr-1">
+                              <RiLogoutBoxRLine />
+                            </span>
+                            <span>Sign Out</span>
+                          </li>
                         </Button>
                       </DropdownMenuItem>
                     </>
@@ -266,14 +283,14 @@ export default function Navbar() {
                   {!email && (
                     <DropdownMenuItem className="cursor-pointer">
                       <Button variant="link" asChild>
-                        <Link to="/login">
+                        <CustomLink to="/login">
                           <li className="w-52 flex justify-start items-center">
                             <span className="mr-1">
                               <LuUserPlus />
                             </span>
                             <span>Sign In</span>
                           </li>
-                        </Link>
+                        </CustomLink>
                       </Button>
                     </DropdownMenuItem>
                   )}

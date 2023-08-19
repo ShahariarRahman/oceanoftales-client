@@ -46,6 +46,11 @@ const notify = toastBase.mixin({
   icon: "info",
 });
 
+const succeedToast = toastBase.mixin({
+  showConfirmButton: false,
+  icon: "success",
+});
+
 const warn = toastBase.mixin({
   showConfirmButton: false,
   icon: "warning",
@@ -65,7 +70,7 @@ const succeed = basePrompt.mixin({
 });
 
 const succeedAndAsk = basePrompt.mixin({
-  confirmButtonText: "Visit",
+  confirmButtonText: "Check",
   icon: "success",
 });
 
@@ -86,6 +91,7 @@ export const SwalToast = {
   confirmDelete,
   succeed,
   succeedAndAsk,
+  succeedToast,
   notify,
   notifyAndAsk,
   warn,

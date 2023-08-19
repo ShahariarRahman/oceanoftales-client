@@ -9,6 +9,7 @@ import { useForm, Controller, SubmitHandler, useWatch } from "react-hook-form";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import Select from "react-select";
 import { IBookParams } from "@/types/globalTypes";
+import { Label } from "./ui/label";
 
 type ISearch = {
   search: string;
@@ -124,10 +125,10 @@ export default function BookFilter({ params, setParams }: Props) {
   };
 
   return (
-    <div className="flex flex-col items-center space-y-4 sticky top-20 text-sm">
+    <div className="flex flex-col items-center space-y-4 text-sm  font-semibold">
       <form
         onSubmit={searchHandleSubmit(handleSearch)}
-        className="w-full flex justify-between gap-3 items-center"
+        className="w-full flex justify-between gap-3 py-10 md:py-0 items-center"
       >
         <Controller
           name="search"
@@ -137,7 +138,7 @@ export default function BookFilter({ params, setParams }: Props) {
             <Input
               {...field}
               type="text"
-              className="py-2"
+              className="py-2 focus:scale-[1.02] focus-visible:ring-0"
               placeholder="Search by title, author, or genre"
             />
           )}
@@ -152,13 +153,20 @@ export default function BookFilter({ params, setParams }: Props) {
       </form>
       <form
         onSubmit={filterHandleSubmit(handleFilter)}
-        className="w-full max-w-md border border-gray-300 rounded-md p-4 text-gray-700"
+        className="w-full   border-[1px] border-gray-200 rounded p-4"
       >
-        <h2 className="text-lg uppercase mb-3">Filter Options</h2>
+        <h2 className="text-lg uppercase mb-3 font-bold text-gray-500">
+          Filter Options
+        </h2>
         <div className="mb-4">
-          <h3 className="text-md uppercase mb-2">Genre</h3>
+          <p className="pb-2">
+            <Label className="uppercase text-xs">popular Genres</Label>
+          </p>
           {bookGenres.map((genre, index) => (
-            <label key={index} className="flex items-center">
+            <Label
+              key={index}
+              className="flex items-center hover:scale-[1.02] hover:text-blue-600"
+            >
               <Controller
                 name={`genres.${genre}`}
                 control={filterControl}
@@ -168,17 +176,19 @@ export default function BookFilter({ params, setParams }: Props) {
                     onCheckedChange={(e) => onChange(e)}
                     checked={value}
                     value={genre}
-                    className="mr-2"
+                    className="mr-2 my-[2px]"
                   />
                 )}
               />
               {genre}
-            </label>
+            </Label>
           ))}
         </div>
-        <div className="mb-4">
-          <h3 className="text-lg uppercase mb-2">Publish Year</h3>
-          <div className="grid gap-2 mt-3">
+        <div className="mb-8">
+          <p className="pb-2">
+            <Label className="uppercase text-xs">Publish Year</Label>
+          </p>
+          <div className="grid gap-2 mt-1">
             <Controller
               control={filterControl}
               name="toYear"
@@ -194,8 +204,8 @@ export default function BookFilter({ params, setParams }: Props) {
                   value={field?.value || ""}
                   onChange={(e) => field.onChange(e)}
                   classNamePrefix="react-select"
-                  className="rounded-md"
-                  placeholder="To year or range"
+                  className="rounded-md focus-within:scale-[1.02]"
+                  placeholder="Less than or equal to"
                   isSearchable={true}
                   isClearable={true}
                   menuPlacement="top"
@@ -245,8 +255,8 @@ export default function BookFilter({ params, setParams }: Props) {
                   value={field?.value || ""}
                   onChange={(e) => field.onChange(e)}
                   classNamePrefix="react-select"
-                  className="rounded-md"
-                  placeholder="From year or range"
+                  className="rounded focus-within:scale-[1.02]"
+                  placeholder="Better than or equal to"
                   isSearchable={true}
                   isClearable={true}
                   menuPlacement="top"
@@ -285,14 +295,18 @@ export default function BookFilter({ params, setParams }: Props) {
         </div>
         <div className="flex justify-between mt-4">
           <Button
-            className="w-20 mr-2 rounded"
+            className="w-20 mr-2 rounded hover:scale-[1.02]"
             size="sm"
             variant="outline"
             onClick={handleReset}
           >
             Reset
           </Button>
-          <Button size="sm" className="w-20 rounded" type="submit">
+          <Button
+            size="sm"
+            className="w-20 rounded hover:scale-105"
+            type="submit"
+          >
             <BsFilterLeft size={18} />
             <span className="ml-1 whitespace-nowrap">Filter</span>
           </Button>

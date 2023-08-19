@@ -33,3 +33,9 @@ export type IAuthInputs = {
   password: string;
   confirmPassword?: string;
 };
+
+export type IUserBook = {
+  finishList?: IBook;
+  readingList?: IBook;
+  wishList?: IBook;
+};

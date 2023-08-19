@@ -5,17 +5,20 @@ import RecentBooks from "@/components/RecentBooks";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import Footer from "@/layouts/Footer";
+import { useAppSelector } from "@/redux/hooks";
 
 export default function Home() {
+  const email = useAppSelector((state) => state.auth.user.email);
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
   };
+
   return (
     <>
-      <section className="flex flex-col-reverse md:justify-around md:flex-row mt-0 sm:mt-10 max-w-7xl mx-auto px-5 2xl:px-0 mb-24">
+      <section className="flex flex-col-reverse md:justify-around md:flex-row mt-0 sm:mt-10 max-w-7xl mx-auto px-5 2xl:px-0 mb-24 caret-transparent">
         <div className="flex md:flex-col justify-center items-start">
           <article>
             <h1 className="text-4xl lg:text-5xl xl:text-6xl font-black text-primary mb-2 sm:whitespace-nowrap capitalize">
@@ -41,7 +44,7 @@ export default function Home() {
         </aside>
       </section>
 
-      <section className="flex flex-col md:justify-around md:flex-row mt-0 sm:mt-10 max-w-7xl mx-auto px-5 2xl:px-0 mb-40">
+      <section className="flex flex-col md:justify-around md:flex-row mt-0 sm:mt-10 max-w-7xl mx-auto px-5 2xl:px-0 mb-40  caret-transparent">
         <aside className="flex md:flex-col justify-center items-start">
           <img className="object-contain w-4/6" src={bannerConnect} alt="" />
         </aside>
@@ -58,7 +61,11 @@ export default function Home() {
               <p>Access, read, and publish books with authentication.</p>
             </div>
             <Button className="mt-5">
-              <Link to="/sign-up">Begin Adventure</Link>
+              {email ? (
+                <Link to="/add-new-book">Begin Sharing</Link>
+              ) : (
+                <Link to="/sign-up">Begin Adventure</Link>
+              )}
             </Button>
           </div>
         </article>
@@ -69,7 +76,7 @@ export default function Home() {
       </section>
 
       <section>
-        <article className="mb-40">
+        <article className="mb-40  caret-transparent">
           <div>
             <img className="mx-auto" src={heroOot} alt="" />
           </div>

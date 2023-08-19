@@ -11,9 +11,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthValidation } from "@/validation/auth.validation";
 import { IAuthInputs } from "@/types/globalTypes";
 import { useSignInMutation } from "@/redux/features/auth/authApi";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useAppDispatch } from "@/redux/hooks";
 import { googleLogin, setUserEmail } from "@/redux/features/auth/authSlice";
-import { useLocation, useNavigate } from "react-router-dom";
 
 type UserAuthFormProps = HTMLAttributes<HTMLDivElement>;
 type SignInError = { data?: any };
@@ -35,14 +34,9 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
   });
   const { email, password } = useWatch({ control });
 
-  const user = useAppSelector((state) => state.auth.user.email);
-
   const [postUser, { isLoading, isError, error: postError, reset: postReset }] =
     useSignInMutation();
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location?.state?.pathname || "/";
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -50,12 +44,6 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
       postReset();
     }
   }, [isError, email, password, postReset, field?.email, field?.password]);
-
-  useEffect(() => {
-    if (user) {
-      navigate(from, { replace: true });
-    }
-  }, [user, from, navigate]);
 
   const onSubmit: SubmitHandler<IAuthInputs> = async (data) => {
     const isFormValid = await trigger();

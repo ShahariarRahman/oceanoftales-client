@@ -1,10 +1,27 @@
 import { Button } from "@/components/ui/button";
 import { SignUpForm } from "../components/SignUpForm";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import loginCover from "../assets/images/login-cover.jpg";
 import Logo from "@/components/ui/logo";
+import { useAppSelector } from "@/redux/hooks";
+import { useEffect } from "react";
 
 export default function SignUp() {
+  const { user } = useAppSelector((state) => state.auth);
+  const location = useLocation();
+  const from = location?.state?.pathname || "/";
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user.email) {
+      navigate(from, { replace: true });
+    }
+  }, [user, from, navigate]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <>
       <section className="container relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0 text-gray-600 p-10 md:p-0">
