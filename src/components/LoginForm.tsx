@@ -1,24 +1,29 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FcGoogle } from "react-icons/fc";
-import { HTMLAttributes, useEffect, useState } from "react";
-import { useForm, Controller, useWatch } from "react-hook-form";
+import { HTMLAttributes, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthValidation } from "@/validation/auth.validation";
 import { IAuthInputs } from "@/types/globalTypes";
-import { useSignInMutation } from "@/redux/features/auth/authApi";
-import { useAppDispatch } from "@/redux/hooks";
-import { googleLogin, setUserEmail } from "@/redux/features/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import {
+  googleLogin,
+  loginUser,
+  setError,
+} from "@/redux/features/auth/authSlice";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type UserAuthFormProps = HTMLAttributes<HTMLDivElement>;
-type SignInError = { data?: any };
 
 export function LoginForm({ className, ...props }: UserAuthFormProps) {
-  const [field, setField] = useState<IAuthInputs>();
+  const { user, isLoading, error, isError } = useAppSelector(
+    (state) => state.auth,
+  );
+
   const {
     control,
     handleSubmit,
@@ -32,35 +37,20 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
       password: "",
     },
   });
-  const { email, password } = useWatch({ control });
 
-  const [postUser, { isLoading, isError, error: postError, reset: postReset }] =
-    useSignInMutation();
-
+  const location = useLocation();
+  const from = location?.state?.pathname || "/";
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    if (isError && (field?.email !== email || field?.password !== password)) {
-      postReset();
-    }
-  }, [isError, email, password, postReset, field?.email, field?.password]);
-
   const onSubmit: SubmitHandler<IAuthInputs> = async (data) => {
-    const isFormValid = await trigger();
+    const isFormValid = await trigger(["password", "email"]);
     if (isFormValid) {
       const user = {
         email: data.email,
         password: data.password,
       };
-      const postData = (await postUser(user)) as any;
-      const accessToken = await postData?.data?.data?.accessToken;
-      if (accessToken) {
-        sessionStorage.setItem("accessToken", accessToken);
-        dispatch(setUserEmail(user.email));
-        reset();
-      } else {
-        setField(data);
-      }
+      await dispatch(loginUser(user));
     }
   };
 
@@ -68,10 +58,15 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
     dispatch(googleLogin());
   };
 
+  useEffect(() => {
+    if (user.email) {
+      reset();
+      navigate(from, { replace: true });
+    }
+  }, [user, from, reset, navigate]);
+
   const errorMessage =
-    errors.email?.message ||
-    errors.password?.message ||
-    (postError as SignInError)?.data?.message;
+    errors.email?.message || errors.password?.message || error || "";
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
@@ -84,13 +79,25 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
             <Controller
               name="email"
               control={control}
-              render={({ field }) => (
+              render={({ field: { value, onChange } }) => (
                 <div>
                   <Input
                     id="sign-in-email"
                     placeholder="name@example.com"
                     type="text"
-                    {...field}
+                    onChange={async (e) => {
+                      onChange(e.target.value);
+                      if (isError && error) {
+                        dispatch(
+                          setError({
+                            error: "",
+                            isError: false,
+                          }),
+                        );
+                      }
+                      await trigger("email");
+                    }}
+                    value={value || ""}
                     autoCapitalize="none"
                     autoComplete="off"
                     autoCorrect="off"
@@ -105,11 +112,23 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
             <Controller
               name="password"
               control={control}
-              render={({ field }) => (
+              render={({ field: { value, onChange } }) => (
                 <div>
                   <Input
                     id="sign-in-password"
-                    {...field}
+                    onChange={async (e) => {
+                      onChange(e.target.value);
+                      if (isError && error) {
+                        dispatch(
+                          setError({
+                            error: "",
+                            isError: false,
+                          }),
+                        );
+                      }
+                      await trigger("password");
+                    }}
+                    value={value || ""}
                     placeholder="your password"
                     type="password"
                     autoCapitalize="none"

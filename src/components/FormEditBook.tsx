@@ -44,6 +44,7 @@ export default function FormEditBook() {
   const { data, isLoading: isGetLoading } = useGetSingleBookQuery(id);
 
   const book: IBook = data?.data;
+  const navigate = useNavigate();
 
   const {
     handleSubmit,
@@ -64,6 +65,12 @@ export default function FormEditBook() {
   });
 
   useEffect(() => {
+    if (book?.author?.email && book?.author?.email !== email) {
+      navigate("/books");
+    }
+  }, [book, email, navigate]);
+
+  useEffect(() => {
     if (book) {
       const defaultValues = inputFieldHelper.bookDefaultField(book);
       Object.entries(defaultValues).forEach(([field, value]) => {
@@ -73,8 +80,6 @@ export default function FormEditBook() {
   }, [book, setValue]);
 
   const [updateBook, { isLoading: isUpdateLoading }] = useUpdateBookMutation();
-
-  const navigate = useNavigate();
 
   const { getRootProps, getInputProps, isDragActive, fileRejections, open } =
     useDropzone({
@@ -181,7 +186,6 @@ export default function FormEditBook() {
   //     console.log(errors);
   //   }
   // }, [errors, fileRejections]);
-  console.log(errors);
   let errorMessage: string | undefined = "";
   if (Object.keys(errors).length > 0) {
     errorMessage =
@@ -396,7 +400,10 @@ export default function FormEditBook() {
               <Button disabled variant="outline" type="button">
                 Reset
               </Button>
-              <LoadingButton btnClass="duration-300" />
+              <LoadingButton
+                btnClass="duration-300"
+                className="w-28 bg-primary/70 hover:bg-primary/60"
+              />
             </>
           ) : (
             <>

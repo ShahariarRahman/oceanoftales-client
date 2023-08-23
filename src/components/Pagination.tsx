@@ -23,7 +23,7 @@ export default function Pagination({ meta, params, setParams }: IProps) {
   }
   const pageLen = 5;
 
-  const { displayedPages, totalPages, lessThanMaxLen, notLastPage } =
+  const { displayedPages, totalPages, lessThanMaxLen, isLastPage } =
     paginationHelpers.getPages(meta, pageLen);
 
   const { startItem, lastItem } = paginationHelpers.getItems(meta);
@@ -34,7 +34,6 @@ export default function Pagination({ meta, params, setParams }: IProps) {
       page: pageNumber,
     });
   };
-
   return (
     <div className="my-20 caret-transparent">
       <p className="text-sm text-muted-foreground pb-4 border-b-[1px] w-full">
@@ -82,7 +81,7 @@ export default function Pagination({ meta, params, setParams }: IProps) {
                 <span>{page}</span>
               </Button>
             ))}
-            {lessThanMaxLen && notLastPage && (
+            {lessThanMaxLen && !isLastPage && (
               <Button
                 className="w-8 p-0 hover:scale-105"
                 size="sm"

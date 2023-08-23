@@ -20,12 +20,13 @@ export type IBook = {
 
 export type IBookParams = {
   sortBy?: string;
+  sort?: string;
   limit?: number;
   page?: number;
   searchTerm?: string;
-  sort?: string;
   genre?: string;
   publicationDate?: string;
+  "author.email"?: string;
 };
 
 export type IAuthInputs = {

@@ -20,7 +20,7 @@ export default function WishList() {
   const books = useMemo(() => data?.data.wishList || [], [data]);
 
   return (
-    <div className="max-w-lg sm:max-w-7xl mx-auto relative px-4 xl:px-0">
+    <div className="max-w-lg sm:max-w-7xl mx-auto relative px-4 xl:px-0 mb-20">
       <div className="flex flex-col justify-between min-h-screen">
         <div className="grid lg:grid-cols-2 xl:grid-cols-4 gap-10">
           {!isLoading && !isFetching && books?.length ? (

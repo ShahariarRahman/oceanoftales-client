@@ -3,7 +3,7 @@ import { IBook, IBookParams } from "@/types/globalTypes";
 import BookFilter from "@/components/BookFilter";
 import { useGetBooksQuery } from "@/redux/features/books/bookApi";
 import BookSkeleton from "@/components/BookSkeleton";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { IApiResponse } from "@/types/responseTypes";
 import { Button } from "@/components/ui/button";
 import Pagination from "@/components/Pagination";
@@ -29,10 +29,6 @@ export default function Books() {
     () => data || [],
     [data],
   );
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [isFetching]);
 
   if (isError && !autoRefetch) {
     setAutoRefetch(true);

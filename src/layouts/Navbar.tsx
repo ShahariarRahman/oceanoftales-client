@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
 import { Button } from "../components/ui/button";
 import { DropdownMenuSeparator } from "../components/ui/dropdown-menu";
@@ -18,37 +17,27 @@ import { PiSun, PiSunFill } from "react-icons/pi";
 import { RiLogoutBoxRLine } from "react-icons/ri";
 import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
-import { useSignOutMutation } from "@/redux/features/auth/authApi";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { setLoading, setUserEmail } from "@/redux/features/auth/authSlice";
+import { setLoading, setUser } from "@/redux/features/auth/authSlice";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import CustomLink from "@/routes/CustomLink";
 import avatar from "@/assets/images/illustration/avatar.png";
 
 export default function Navbar() {
-  const { user, platform, isLoading } = useAppSelector((state) => state.auth);
+  const {
+    user: { email },
+    isLoading,
+  } = useAppSelector((state) => state.auth);
   const [isNight, setIsNight] = useState<boolean>(false);
-
-  const email = useAppSelector((state) => state.auth.user.email);
 
   const dispatch = useAppDispatch();
 
-  const [postSignOut] = useSignOutMutation();
-
   const handleSignOut = async () => {
     dispatch(setLoading(true));
-    if (platform === "custom") {
-      const data = (await postSignOut(undefined)) as any;
-      if (data?.data?.success) {
-        sessionStorage.clear();
-        dispatch(setUserEmail(null));
-      }
-    } else if (platform === "firebase") {
-      signOut(auth).then(() => {
-        dispatch(setUserEmail(null));
-      });
-    }
+    await signOut(auth).then(() => {
+      dispatch(setUser(null));
+    });
     dispatch(setLoading(false));
   };
 
@@ -155,29 +144,41 @@ export default function Navbar() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-52">
                       <DropdownMenuLabel>
-                        <p className="capitalize">
-                          {user.email?.split("@")[0]}
-                        </p>
-                        <small> {user?.email}</small>
+                        <p className="capitalize">{email?.split("@")[0]}</p>
+                        <small> {email}</small>
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="cursor-pointer">
-                        <CustomLink to="finished-book">
-                          Finished Book
-                        </CustomLink>
+                      <DropdownMenuItem
+                        title="not done"
+                        className="cursor-not-allowed text-red-300"
+                      >
+                        My Profile
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-not-allowed">
-                        Profile
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-not-allowed">
-                        Cart
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-not-allowed">
-                        My Books
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="cursor-not-allowed">
-                        Subscription
-                      </DropdownMenuItem>
+                      <CustomLink to="/my-books">
+                        <DropdownMenuItem className="cursor-pointer">
+                          My Books
+                        </DropdownMenuItem>
+                      </CustomLink>
+                      <CustomLink to="/wishlist-book">
+                        <DropdownMenuItem className="cursor-pointer">
+                          Wish List
+                        </DropdownMenuItem>
+                      </CustomLink>
+                      <CustomLink to="/reading-book">
+                        <DropdownMenuItem className="cursor-pointer">
+                          Reading List
+                        </DropdownMenuItem>
+                      </CustomLink>
+                      <CustomLink to="/finished-book">
+                        <DropdownMenuItem className="cursor-pointer">
+                          Finished List
+                        </DropdownMenuItem>
+                      </CustomLink>
+                      <button onClick={handleSignOut}>
+                        <DropdownMenuItem className="cursor-pointer">
+                          Sign Out
+                        </DropdownMenuItem>
+                      </button>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </li>
@@ -217,6 +218,18 @@ export default function Navbar() {
                   </DropdownMenuItem>
                   {email && (
                     <>
+                      <DropdownMenuItem className="cursor-pointer">
+                        <Button variant="link" asChild>
+                          <CustomLink to="/my-books">
+                            <li className="w-52 flex justify-start items-center">
+                              <span className="mr-1">
+                                <LuBookPlus />
+                              </span>
+                              <span>My Books</span>
+                            </li>
+                          </CustomLink>
+                        </Button>
+                      </DropdownMenuItem>
                       <DropdownMenuItem className="cursor-pointer">
                         <Button variant="link" asChild>
                           <CustomLink to="/add-new-book">

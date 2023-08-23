@@ -1,26 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import loginCover from "../assets/images/login-cover.jpg";
 import { LoginForm } from "@/components/LoginForm";
 import Logo from "@/components/ui/logo";
-import { useAppSelector } from "@/redux/hooks";
-import { useEffect } from "react";
-
 export default function Login() {
-  const { user } = useAppSelector((state) => state.auth);
-  const location = useLocation();
-  const from = location?.state?.pathname || "/";
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user.email) {
-      navigate(from, { replace: true });
-    }
-  }, [user, from, navigate]);
-
   return (
     <>
-      <section className="container relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0 text-gray-600 p-10 md:p-0">
+      <section className="container relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0 text-gray-600">
         <aside className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
           <div
             className="absolute inset-0 bg-cover"
@@ -35,7 +21,7 @@ export default function Login() {
             <blockquote className="space-y-2"></blockquote>
           </div>
         </aside>
-        <div className="lg:p-8">
+        <div className="p-10">
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight text-gray-900">

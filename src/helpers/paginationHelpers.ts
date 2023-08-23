@@ -11,13 +11,13 @@ const getPages = (meta: IMeta, pageLen: number = 5) => {
   );
 
   const lessThanMaxLen = totalPages > displayedPages.length;
-  const notLastPage = meta.total >= meta.page + pageLen;
+  const isLastPage = totalPages === page;
 
   return {
     displayedPages,
     totalPages,
     lessThanMaxLen,
-    notLastPage,
+    isLastPage,
   };
 };
 

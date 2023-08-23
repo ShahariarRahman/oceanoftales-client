@@ -7,10 +7,10 @@ export default function EditBook() {
         <div className="w-full flex justify-center min-h-screen">
           <div className="flex flex-col items-center rounded-lg mx-5 sm:m-12 w-full bg-white">
             <h4 className="mt-10 2xl:mt-16 mb-1 text-xl font-bold text-gray-900">
-              Publish your new book
+              Update your added book
             </h4>
             <h6 className="mb-6 text-sm text-muted-foreground">
-              Create a sleek form for adding new books easily.
+              Update book form to ensure accurate information.
             </h6>
             <FormEditBook />
           </div>

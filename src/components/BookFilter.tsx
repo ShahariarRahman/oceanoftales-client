@@ -51,24 +51,24 @@ export default function BookFilter({ params, setParams }: Props) {
   const { search } = useWatch({ control: searchControl });
 
   //  * heavily rendering
-  // const { genres, fromYear, toYear } = useWatch({ control: filterControl });
-  // useEffect(() => {
-  //   if (genres) {
-  //     const checkedGenres = Object.keys(genres).filter(
-  //       (genre) => genres[genre],
-  //     );
-  //     if (!checkedGenres.length && params?.genre) {
-  //       const { genre, ...rest } = params;
-  //       setParams({ ...rest, page: 1 });
-  //       console.log({ genre });
-  //     }
-  //   }
-  //   if (!fromYear && !toYear && params.publicationDate?.length) {
-  //     const { publicationDate, ...rest } = params;
-  //     setParams({ ...rest, page: 1 });
-  //     console.log({ publicationDate });
-  //   }
-  // }, [genres, params, fromYear, toYear, setParams]);
+  const { genres, fromYear, toYear } = useWatch({ control: filterControl });
+  useEffect(() => {
+    if (genres) {
+      const checkedGenres = Object.keys(genres).filter(
+        (genre) => genres[genre],
+      );
+      if (!checkedGenres.length && params?.genre) {
+        const { genre, ...rest } = params;
+        setParams({ ...rest, page: 1 });
+        console.log({ genre });
+      }
+    }
+    if (!fromYear && !toYear && params.publicationDate?.length) {
+      const { publicationDate, ...rest } = params;
+      setParams({ ...rest, page: 1 });
+      console.log({ publicationDate });
+    }
+  }, [genres, params, fromYear, toYear, setParams]);
 
   useEffect(() => {
     if (!search?.length && params?.searchTerm) {
@@ -153,7 +153,7 @@ export default function BookFilter({ params, setParams }: Props) {
       </form>
       <form
         onSubmit={filterHandleSubmit(handleFilter)}
-        className="w-full   border-[1px] border-gray-200 rounded p-4"
+        className="w-full border-[1px] border-gray-200 rounded p-4"
       >
         <h2 className="text-lg uppercase mb-3 font-bold text-gray-500">
           Filter Options
@@ -191,7 +191,7 @@ export default function BookFilter({ params, setParams }: Props) {
           <div className="grid gap-2 mt-1">
             <Controller
               control={filterControl}
-              name="toYear"
+              name="fromYear"
               render={({ field }) => (
                 <Select
                   {...field}
@@ -204,7 +204,7 @@ export default function BookFilter({ params, setParams }: Props) {
                   value={field?.value || ""}
                   onChange={(e) => field.onChange(e)}
                   classNamePrefix="react-select"
-                  className="rounded-md focus-within:scale-[1.02]"
+                  className="rounded focus-within:scale-[1.02]"
                   placeholder="Less than or equal to"
                   isSearchable={true}
                   isClearable={true}
@@ -242,7 +242,7 @@ export default function BookFilter({ params, setParams }: Props) {
             />
             <Controller
               control={filterControl}
-              name="fromYear"
+              name="toYear"
               render={({ field }) => (
                 <Select
                   {...field}

@@ -1,26 +1,32 @@
 import BookCard from "@/components/BookCard";
-import { useGetFinishQuery } from "@/redux/features/userBooks/userBooksApi";
+
 import { useAppSelector } from "@/redux/hooks";
 import bookNotFound from "@/assets/images/illustration/bookNotFound.png";
 import BookSkeleton from "@/components/BookSkeleton";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { IBook } from "@/types/globalTypes";
+import { IBook, IBookParams } from "@/types/globalTypes";
+import { IApiResponse } from "@/types/responseTypes";
+import { useGetBooksQuery } from "@/redux/features/books/bookApi";
+import Pagination from "@/components/Pagination";
 
-export default function FinishList() {
+export default function MyBooks() {
   const email = useAppSelector((state) => state.auth.user.email);
-
-  const navigate = useNavigate();
-
-  const { data, isLoading, isFetching } = useGetFinishQuery({
-    email: email!,
+  const [params, setParams] = useState<IBookParams>({
+    "author.email": email!,
   });
 
-  const books = useMemo(() => data?.data.finishList || [], [data]);
+  const navigate = useNavigate();
+  const { data, isLoading, isFetching } = useGetBooksQuery(params);
+
+  const { data: books, meta }: IApiResponse<IBook[]> = useMemo(
+    () => data || [],
+    [data],
+  );
 
   return (
-    <div className="max-w-lg sm:max-w-7xl mx-auto relative px-4 xl:px-0 mb-20">
+    <div className="max-w-lg sm:max-w-7xl mx-auto relative px-4 xl:px-0">
       <div className="flex flex-col justify-between min-h-screen">
         <div className="grid lg:grid-cols-2 xl:grid-cols-4 gap-10">
           {!isLoading && !isFetching && books?.length ? (
@@ -52,23 +58,25 @@ export default function FinishList() {
                   Currency List is Empty
                 </h2>
                 <p className="text-muted-foreground text-sm text-center">
-                  Your completed book list is currently empty. If you have any
-                  questions or need assistance in finding the perfect books to
-                  add, please feel free to contact our team. We're here to help
-                  you make the most of your reading experience.
+                  You have not add any book yet. This book list is currently
+                  empty. If you have any questions or need assistance in finding
+                  the perfect books to add, please feel free to contact our
+                  team. We're here to help you make the most of your reading
+                  experience.
                 </p>
                 <Button
-                  onClick={() => navigate("/books")}
+                  onClick={() => navigate("/add-new-book")}
                   variant="outline"
                   size="sm"
                   className="mt-5 w-32 rounded"
                 >
-                  Add item
+                  Add Book
                 </Button>
               </div>
             </div>
           )}
         </div>
+        <Pagination params={params} setParams={setParams} meta={meta} />
       </div>
     </div>
   );
